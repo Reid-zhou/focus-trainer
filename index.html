@@ -26,9 +26,9 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 @keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
 
 /* 顶部栏 */
-.topbar{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
-.back{border:none; background:rgba(255,255,255,.85); color:var(--ink); font-size:15px; padding:8px 14px; border-radius:14px; cursor:pointer; box-shadow:0 2px 8px rgba(74,144,226,.12);}
-.ptitle{font-size:18px; font-weight:700; color:var(--ink);}
+.topbar{display:flex; align-items:center; gap:10px; margin-bottom:14px; background:rgba(255,255,255,.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); padding:8px 10px; border-radius:16px; box-shadow:0 2px 8px rgba(74,144,226,.12);}
+.back{border:none; background:#fff; color:var(--ink); font-size:15px; padding:8px 14px; border-radius:14px; cursor:pointer; box-shadow:0 2px 8px rgba(74,144,226,.12);}
+.ptitle{font-size:18px; font-weight:800; color:var(--ink); letter-spacing:.5px;}
 
 /* 首页专属背景 */
 .home-bg{position:fixed; top:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; height:420px; background:url('assets/images/home-bg.jpg') center 30%/cover no-repeat; z-index:-2; border-radius:0 0 32px 32px;}
@@ -78,14 +78,26 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 .size-btn{border:2px solid #C5DDF7; background:#FFF; color:var(--ink); font-size:15px; font-weight:700; padding:9px 16px; border-radius:16px; cursor:pointer;}
 .size-btn.active{background:var(--main); border-color:var(--main); color:#fff;}
 
+/* 关卡选择（渐进难度） */
+.level-row{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:8px 0 12px;}
+.level-btn{border:2px solid #C5DDF7; background:#FFF; color:var(--ink); font-size:14px; font-weight:700; padding:8px 12px; border-radius:14px; cursor:pointer; line-height:1.2; text-align:center; min-width:62px;}
+.level-btn small{display:block; font-weight:500; font-size:10px; color:var(--ink2); margin-top:2px;}
+.level-btn.active{background:var(--main); border-color:var(--main); color:#fff; box-shadow:0 4px 12px rgba(74,144,226,.25);}
+.level-btn.active small{color:rgba(255,255,255,.85);}
+
 /* 网格 */
 .grid{display:grid; grid-template-columns:repeat(var(--n,3),1fr); gap:10px; margin:14px auto; max-width:360px;}
 .cell{aspect-ratio:1; display:flex; align-items:center; justify-content:center; background:#FFF; border-radius:18px; font-weight:800; color:var(--ink); box-shadow:0 4px 12px rgba(74,144,226,.10); cursor:pointer; user-select:none;}
 .cell:active{transform:scale(.96);}
 .cell.done{background:#CFEFE0; color:var(--ink); box-shadow:none; cursor:default;}
 .cell.found{background:#D6F0E0;}
+.cell.move{animation:pop .35s ease;}
+@keyframes pop{0%{transform:scale(.82);}50%{transform:scale(1.08);}100%{transform:scale(1);}}
 .grid.shake{animation:shake .32s;}
 @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-6px);}80%{transform:translateX(6px);}}
+/* 不规则关卡：散落布局 */
+#schulte-grid.irregular{display:block; position:relative; height:440px; max-width:360px; margin:14px auto; gap:0;}
+#schulte-grid.irregular .cell{position:absolute; aspect-ratio:auto;}
 
 /* 结果 */
 .result{display:none; text-align:center; background:var(--card); border-radius:20px; padding:18px; margin-top:14px; box-shadow:0 6px 18px rgba(74,144,226,.16);}
@@ -105,7 +117,8 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 /* Stroop */
 .stroop-progress{height:10px; background:#D6EAFF; border-radius:8px; overflow:hidden; margin:8px 0;}
 .stroop-progress>i{display:block; height:100%; width:0; background:var(--main); transition:width .15s;}
-.stroop-meta{display:flex; justify-content:space-between; font-size:14px; color:var(--ink2); margin:6px 2px;}
+.stroop-meta{display:flex; justify-content:space-between; font-size:14px; color:var(--ink); font-weight:600; margin:6px 2px;}
+.stroop-instr{text-align:center; font-size:15px; font-weight:800; color:var(--ink); background:rgba(255,255,255,.7); border-radius:14px; padding:9px 10px; margin:2px 0 6px; box-shadow:0 2px 8px rgba(74,144,226,.10);}
 .stroop-word{text-align:center; font-size:78px; font-weight:900; margin:18px 0 6px;}
 .stroop-feedback{text-align:center; font-size:18px; font-weight:700; height:26px;}
 .stroop-feedback.right{color:var(--green);}
@@ -115,7 +128,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 .opt-btn:active{transform:scale(.97);}
 
 /* 找一找 */
-.find-tip{text-align:center; font-size:17px; font-weight:700; margin:10px 0; color:var(--main-d);}
+.find-tip{text-align:center; font-size:17px; font-weight:700; margin:10px 0; color:var(--ink); background:rgba(255,255,255,.6); border-radius:14px; padding:8px 10px;}
 
 /* 护眼 */
 .rest-ring{width:170px; height:170px; border-radius:50%; margin:22px auto 8px; background:conic-gradient(var(--green) var(--p,0%), #E6F4EC 0); display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:0 8px 22px rgba(63,191,110,.25);}
@@ -181,7 +194,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   <!-- 舒尔特方格 -->
   <section id="page-schulte" class="page">
     <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">舒尔特方格</div></div>
-    <div class="size-row" id="schulte-sizes"></div>
+    <div class="level-row" id="schulte-levels"></div>
     <div class="timer" id="schulte-timer">00:00</div>
     <div class="grid" id="schulte-grid"></div>
     <div class="result" id="schulte-result"></div>
@@ -192,8 +205,10 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   <!-- 颜色挑战 -->
   <section id="page-stroop" class="page">
     <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">颜色挑战</div></div>
+    <div class="level-row" id="stroop-levels"></div>
     <div class="stroop-progress"><i id="stroop-bar"></i></div>
-    <div class="stroop-meta"><span id="stroop-current">1 / 20</span><span>最高 <span id="stroop-best">0</span></span></div>
+    <div class="stroop-meta"><span id="stroop-current">1 / 10</span><span>最高 <span id="stroop-best">0</span> 题</span></div>
+    <div class="stroop-instr" id="stroop-instr">请点出【字】的颜色</div>
     <div class="stroop-word" id="stroop-word">红</div>
     <div class="stroop-feedback" id="stroop-feedback"></div>
     <div class="stroop-options" id="stroop-options"></div>
@@ -226,7 +241,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   <!-- 我的成就 -->
   <section id="page-stats" class="page">
     <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">我的成就</div></div>
-    <div class="title" style="text-align:center; font-size:26px; color:var(--main-d); font-weight:900;">🏆 我的成就</div>
+    <div class="title" style="text-align:center; font-size:26px; color:var(--ink); font-weight:900;">🏆 我的成就</div>
     <div class="subtitle" id="stats-praise" style="text-align:center;">开始你的第一局吧！</div>
     <div class="total-card"><div class="total-label">总游戏次数</div><div class="total-value" id="stats-playcount">0</div><div class="total-unit">次</div></div>
     <div class="card"><div class="list-title">最佳成绩</div><div id="stats-items"></div></div>
@@ -242,7 +257,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 
   /* ===================== 本地存储（localStorage 版，逻辑同小程序） ===================== */
   var ROOT_KEY = 'focus_trainer_data';
-  var BEST_KEYS = ['schulte3','schulte4','schulte5','find'];
+  var BEST_KEYS = ['schulte3','schulte4','schulte5','schulte6','schulteDyn','schulteIrr','find'];
   var SCORE_KEYS = ['stroop'];
   function defaultData(){
     var best={}, score={};
@@ -347,39 +362,74 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   };
 
   /* ===================== 舒尔特方格 ===================== */
+  /* ===================== 舒尔特方格（渐进关卡） ===================== */
+  var SCHULTE_LEVELS=[
+    {name:'入门', size:3, type:'grid', bestKey:'schulte3', desc:'3x3'},
+    {name:'进阶', size:4, type:'grid', bestKey:'schulte4', desc:'4x4'},
+    {name:'挑战', size:5, type:'grid', bestKey:'schulte5', desc:'5x5'},
+    {name:'高手', size:6, type:'grid', bestKey:'schulte6', desc:'6x6'},
+    {name:'动态', size:5, type:'dynamic', bestKey:'schulteDyn', desc:'数字会动'},
+    {name:'不规则', size:5, type:'irregular', bestKey:'schulteIrr', desc:'散落形'}
+  ];
+  function cellFont(size){ return size>=6?'38px':(size===5?'46px':(size===4?'54px':'70px')); }
   var schulte={
     size:3, total:9, cells:[], next:1, playing:false, finished:false, wrongCount:0,
-    _accum:0, _startAt:0, _timer:null, _shake:null, inited:false,
+    levelIndex:0, level:SCHULTE_LEVELS[0], layout:null,
+    _accum:0, _startAt:0, _timer:null, _shake:null, _dyn:null, inited:false,
     enter:function(){
-      if(!this.inited){ this.inited=true; this.resetGame(3); }
-      else if(this.playing && !this.finished){ this.startTimer(); }
+      if(!this.inited){ this.inited=true; this.resetGame(0); }
+      else if(this.playing && !this.finished){ this.startTimer(); this.ensureDyn(); }
     },
-    leave:function(){ this.pauseTimer(); this.clearShake(); },
-    resetGame:function(size){
-      this.stopTimer(); this.clearShake(); this._accum=0; this._startAt=0;
-      this.size=size; this.total=size*size; this.next=1; this.playing=false; this.finished=false; this.wrongCount=0;
+    leave:function(){ this.pauseTimer(); this.clearShake(); this.clearDyn(); },
+    resetGame:function(li){
+      this.stopTimer(); this.clearShake(); this.clearDyn(); this._accum=0; this._startAt=0;
+      var lv=SCHULTE_LEVELS[li]; this.levelIndex=li; this.level=lv;
+      this.size=lv.size; this.total=lv.size*lv.size; this.next=1; this.playing=false; this.finished=false; this.wrongCount=0;
       var nums=[]; for(var i=1;i<=this.total;i++) nums.push(i);
       this.cells=shuffle(nums).map(function(n){ return {value:n,done:false}; });
+      if(lv.type==='irregular') this.buildLayout();
+      $('schulte-grid').classList.toggle('irregular', lv.type==='irregular');
       this.renderAll(); this.renderTimer('00:00');
       $('schulte-result').classList.remove('show');
     },
-    renderSizes:function(){
-      var sr=$('schulte-sizes'); sr.innerHTML='';
-      [3,4,5].forEach(function(s){
-        var b=document.createElement('button'); b.className='size-btn'+(s===schulte.size?' active':'');
-        b.textContent=s+'×'+s; b.dataset.action='size'; b.dataset.size=s; sr.appendChild(b);
+    buildLayout:function(){
+      var n=this.size, areaW=330, areaH=420, cw=Math.floor(Math.min(areaW/n, areaH/n))-4;
+      var pos=[];
+      for(var r=0;r<n;r++) for(var c=0;c<n;c++){
+        var x=c*(areaW/n)+(Math.random()*16-8)+3;
+        var y=r*(areaH/n)+(Math.random()*16-8)+3;
+        pos.push({x:x,y:y,cw:cw,rad:pick(['50%','18px','30% 50%','50% 30%','22px'])});
+      }
+      this.layout=pos;
+    },
+    renderLevels:function(){
+      var sr=$('schulte-levels'); sr.innerHTML='';
+      var self=this;
+      SCHULTE_LEVELS.forEach(function(lv,idx){
+        var b=document.createElement('button'); b.className='level-btn'+(idx===self.levelIndex?' active':'');
+        b.innerHTML=lv.name+'<small>'+lv.desc+'</small>';
+        b.dataset.action='level'; b.dataset.module='schulte'; b.dataset.index=idx; sr.appendChild(b);
       });
     },
-    renderGrid:function(){
-      var g=$('schulte-grid'); g.innerHTML=''; g.style.setProperty('--n',this.size);
-      var fs=this.size>=5?'42px':(this.size===4?'54px':'70px');
+    renderGrid:function(moving){
+      var g=$('schulte-grid'); g.innerHTML='';
+      g.classList.toggle('irregular', this.level.type==='irregular');
+      if(this.level.type!=='irregular') g.style.setProperty('--n',this.size);
+      var fs=cellFont(this.size);
+      var self=this;
       this.cells.forEach(function(c,i){
-        var d=document.createElement('div'); d.className='cell'+(c.done?' done':'');
-        d.style.fontSize=fs; d.textContent=c.done?'':c.value;
-        d.dataset.action='cell'; d.dataset.index=i; g.appendChild(d);
+        var d=document.createElement('div'); d.className='cell'+(c.done?' done':'')+(moving?' move':'');
+        d.textContent=String(c.value);
+        d.dataset.action='cell'; d.dataset.index=i;
+        if(self.level.type==='irregular'){
+          var p=self.layout[i];
+          d.style.position='absolute'; d.style.left=p.x+'px'; d.style.top=p.y+'px';
+          d.style.width=p.cw+'px'; d.style.height=p.cw+'px'; d.style.fontSize=(p.cw*0.5)+'px'; d.style.borderRadius=p.rad;
+        } else { d.style.fontSize=fs; }
+        g.appendChild(d);
       });
     },
-    renderAll:function(){ this.renderSizes(); this.renderGrid(); },
+    renderAll:function(){ this.renderLevels(); this.renderGrid(); },
     renderTimer:function(t){ $('schulte-timer').textContent=t; },
     startTimer:function(){
       var self=this; this.stopTimer(); this._startAt=Date.now();
@@ -388,16 +438,29 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
         self.renderTimer(store.formatTime(el));
       },100);
     },
+    ensureDyn:function(){
+      if(this.level.type!=='dynamic'||this._dyn) return;
+      var self=this;
+      this._dyn=setInterval(function(){ if(self.finished) return; self.shuffleDynamic(); },2600);
+    },
+    shuffleDynamic:function(){
+      var unfin=this.cells.filter(function(c){ return !c.done; });
+      if(unfin.length<2) return;
+      var sh=shuffle(unfin); var k=0;
+      this.cells=this.cells.map(function(c){ return c.done?c:sh[k++]; });
+      this.renderGrid(true);
+    },
     pauseTimer:function(){ if(this._timer){ this._accum+=Date.now()-this._startAt; this.stopTimer(); } },
     stopTimer:function(){ if(this._timer){ clearInterval(this._timer); this._timer=null; } },
+    clearDyn:function(){ if(this._dyn){ clearInterval(this._dyn); this._dyn=null; } },
     clearShake:function(){ if(this._shake){ clearTimeout(this._shake); this._shake=null; } $('schulte-grid').classList.remove('shake'); },
     onTapCell:function(i){
       if(this.finished) return;
       var c=this.cells[i]; if(!c||c.done) return;
-      if(!this.playing){ this.playing=true; this.startTimer(); }
+      if(!this.playing){ this.playing=true; this.startTimer(); this.ensureDyn(); }
       if(c.value===this.next){
         c.done=true; this.next++;
-        var d=$('schulte-grid').children[i]; d.classList.add('done'); d.textContent=c.value;
+        var d=$('schulte-grid').children[i]; d.classList.add('done'); d.textContent=String(c.value);
         if(this.next>this.total){ this.finish(); }
       } else { this.onWrong(); }
     },
@@ -407,8 +470,8 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
       var self=this; this.clearShake(); this._shake=setTimeout(function(){ g.classList.remove('shake'); },340);
     },
     finish:function(){
-      this.pauseTimer(); var used=this._accum;
-      var key='schulte'+this.size;
+      this.pauseTimer(); this.clearDyn(); var used=this._accum;
+      var key=this.level.bestKey;
       var isNew=store.setBest(key,used); store.incrPlayCount();
       this.finished=true; this.playing=false;
       this.renderTimer(store.formatTime(used));
@@ -421,40 +484,69 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     }
   };
 
+
   /* ===================== 颜色挑战（Stroop） ===================== */
+  /* ===================== 颜色挑战（Stroop，渐进关卡） ===================== */
   var COLORS=[
     {key:'red',label:'红',hex:'#FF5A5A'},
     {key:'blue',label:'蓝',hex:'#4A90E2'},
     {key:'green',label:'绿',hex:'#3FBF6E'},
-    {key:'yellow',label:'黄',hex:'#F5B301'}
+    {key:'yellow',label:'黄',hex:'#F5B301'},
+    {key:'purple',label:'紫',hex:'#9B59B6'},
+    {key:'orange',label:'橙',hex:'#FF8A3D'}
   ];
-  var TOTAL_Q=20;
-  function makeQuestion(){
-    var word=pick(COLORS);
-    var others=COLORS.filter(function(c){ return c.key!==word.key; });
+  var STROOP_LEVELS=[
+    {name:'入门', colors:4, total:10, mode:'color', time:0, desc:'10题'},
+    {name:'进阶', colors:4, total:20, mode:'color', time:0, desc:'20题'},
+    {name:'高手', colors:6, total:20, mode:'color', time:0, desc:'6色'},
+    {name:'限时', colors:6, total:25, mode:'color', time:3000, desc:'3秒/题'},
+    {name:'反向', colors:4, total:20, mode:'word', time:0, desc:'点字义'},
+    {name:'双关', colors:6, total:25, mode:'mix', time:0, desc:'随机'}
+  ];
+  function makeQuestion(palette, baseMode){
+    var word=pick(palette);
+    var others=palette.filter(function(c){ return c.key!==word.key; });
     var shown=pick(others);
-    return { wordLabel:word.label, colorKey:shown.key, colorHex:shown.hex };
+    var mode = baseMode==='mix' ? (Math.random()<0.5?'color':'word') : baseMode;
+    return {
+      wordLabel:word.label, wordKey:word.key, colorKey:shown.key, colorHex:shown.hex,
+      mode:mode, correctKey:(mode==='word'?word.key:shown.key)
+    };
+  }
+  function instrText(mode){
+    return mode==='word' ? '请点出【字】的意思' : '请点出【字】的颜色';
   }
   var stroop={
     current:1, score:0, question:null, options:[], finished:false, locked:false, feedback:'', fbType:'',
-    _timer:null, inited:false,
+    levelIndex:0, level:STROOP_LEVELS[0], total:10, palette:COLORS.slice(0,4),
+    _timer:null, _qtimer:null, inited:false,
     enter:function(){
-      this.inited=true; this.startGame();
+      this.inited=true; this.renderLevels(); this.startGame();
     },
-    leave:function(){ this.clearTimer(); },
+    leave:function(){ this.clearTimer(); this.clearQuestionTimer(); },
     clearTimer:function(){ if(this._timer){ clearTimeout(this._timer); this._timer=null; } },
+    clearQuestionTimer:function(){ if(this._qtimer){ clearTimeout(this._qtimer); this._qtimer=null; } },
+    resetGame:function(li){
+      this.levelIndex=li; this.level=STROOP_LEVELS[li]; this.renderLevels(); this.startGame();
+    },
     startGame:function(){
-      this.clearTimer(); this.current=1; this.score=0; this.finished=false; this.locked=false;
-      this.feedback=''; this.fbType=''; this.question=makeQuestion(); this.options=shuffle(COLORS);
+      this.clearTimer(); this.clearQuestionTimer();
+      this.current=1; this.score=0; this.finished=false; this.locked=false;
+      this.feedback=''; this.fbType='';
+      this.total=this.level.total;
+      this.palette=COLORS.slice(0,this.level.colors);
+      this.question=makeQuestion(this.palette,this.level.mode);
+      this.options=shuffle(this.palette);
       this.render();
     },
     render:function(){
       if(this.question){
         var w=$('stroop-word'); w.textContent=this.question.wordLabel; w.style.color=this.question.colorHex;
+        $('stroop-instr').textContent=instrText(this.question.mode);
       }
-      $('stroop-current').textContent=this.current+' / '+TOTAL_Q;
+      $('stroop-current').textContent=this.current+' / '+this.total;
       $('stroop-best').textContent=store.getScore('stroop');
-      $('stroop-bar').style.width=((this.current-1)/TOTAL_Q*100)+'%';
+      $('stroop-bar').style.width=((this.current-1)/this.total*100)+'%';
       var fb=$('stroop-feedback'); fb.textContent=this.feedback; fb.className='stroop-feedback '+(this.fbType||'');
       var box=$('stroop-options'); box.innerHTML='';
       if(!this.finished){
@@ -465,10 +557,10 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
       }
       if(this.finished){
         var r=$('stroop-result');
-        var acc=Math.round(this.score/TOTAL_Q*100);
+        var acc=Math.round(this.score/this.total*100);
         var praise = acc>=90?'专注力超强，火眼金睛！🔥' : acc>=70?'不错哦，再练更厉害！💪' : '别灰心，多玩几次就熟啦～🌟';
-        r.innerHTML='<div class="big">'+this.score+' / '+TOTAL_Q+'</div>'+
-          '<div class="sub">正确率 '+acc+'% · 历史最高 '+store.getScore('stroop')+' / '+TOTAL_Q+'</div>'+
+        r.innerHTML='<div class="big">'+this.score+' / '+this.total+'</div>'+
+          '<div class="sub">正确率 '+acc+'% · 历史最高 '+store.getScore('stroop')+' 题</div>'+
           '<div class="record">'+(this.isNew?'新纪录！⭐':praise)+'</div>';
         r.classList.add('show');
         $('stroop-restart').style.display='';
@@ -479,25 +571,46 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     },
     onTap:function(key){
       if(this.finished||this.locked) return;
-      var right=key===this.question.colorKey;
+      this.clearQuestionTimer();
+      this.advance(key===this.question.correctKey);
+    },
+    onTimeout:function(){
+      if(this.finished||this.locked) return;
+      this.advance(false);
+    },
+    advance:function(right){
       if(!right) vibrate();
       if(right) this.score++;
-      this.feedback=right?'答对啦 ✅':'答错咯 ❌ 要看“字的颜色”';
+      this.feedback=right?'答对啦 ✅':'答错咯 ❌ '+(this.question.mode==='word'?'要看“字的意思”':'要看“字的颜色”');
       this.fbType=right?'right':'wrong'; this.locked=true; this.render();
       var self=this; this._timer=setTimeout(function(){ self.next(); },420);
     },
     next:function(){
       this.clearTimer();
-      if(this.current>=TOTAL_Q){ this.finish(); return; }
-      this.current++; this.question=makeQuestion(); this.options=shuffle(COLORS);
+      if(this.current>=this.total){ this.finish(); return; }
+      this.current++; this.question=makeQuestion(this.palette,this.level.mode); this.options=shuffle(this.palette);
       this.feedback=''; this.fbType=''; this.locked=false; this.render();
+      if(this.level.time>0){
+        var self=this;
+        this._qtimer=setTimeout(function(){ self.onTimeout(); }, this.level.time);
+      }
     },
     finish:function(){
       var s=this.score; this.isNew=store.setScore('stroop',s); store.incrPlayCount();
-      this.finished=true; this.feedback=''; this.fbType=''; this.render();
+      this.finished=true; this.feedback=''; this.fbType=''; this.clearQuestionTimer(); this.render();
       toast(this.isNew?'新纪录！⭐':'完成啦！⭐');
+    },
+    renderLevels:function(){
+      var sr=$('stroop-levels'); sr.innerHTML='';
+      var self=this;
+      STROOP_LEVELS.forEach(function(lv,idx){
+        var b=document.createElement('button'); b.className='level-btn'+(idx===self.levelIndex?' active':'');
+        b.innerHTML=lv.name+'<small>'+lv.desc+'</small>';
+        b.dataset.action='level'; b.dataset.module='stroop'; b.dataset.index=idx; sr.appendChild(b);
+      });
     }
   };
+
 
   /* ===================== 找一找 ===================== */
   var EMOJI_POOL=['🌟','🍎','🐱','🌸','🐟','🎈','🍀','🐝','🍄','⚽️'];
@@ -642,14 +755,13 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
       var s=store.getStats();
       $('stats-playcount').textContent=s.playCount;
       $('stats-praise').textContent=buildPraise(s.playCount);
-      var items=[
-        {emoji:'🔢',name:'舒尔特 3×3',unit:'最快用时',value:store.formatSeconds(s.bestSchulte3)},
-        {emoji:'🔢',name:'舒尔特 4×4',unit:'最快用时',value:store.formatSeconds(s.bestSchulte4)},
-        {emoji:'🔢',name:'舒尔特 5×5',unit:'最快用时',value:store.formatSeconds(s.bestSchulte5)},
-        {emoji:'🎨',name:'颜色挑战',unit:'最高分',value:s.bestStroop>0?s.bestStroop+' / 20':'暂无'},
+      var items=
+        SCHULTE_LEVELS.map(function(lv){ return {emoji:'🔢', name:'舒尔特·'+lv.name, unit:'最快用时', value:store.formatSeconds(store.getBest(lv.bestKey))}; })
+        .concat([
+        {emoji:'🎨',name:'颜色挑战',unit:'最高分',value:s.bestStroop>0?s.bestStroop+' 题':'暂无'},
         {emoji:'🔍',name:'找一找',unit:'最快用时',value:store.formatSeconds(s.bestFind)},
         {emoji:'👀',name:'护眼休息',unit:'累计次数',value:s.restCount>0?s.restCount+' 次':'暂无'}
-      ];
+      ]);
       var box=$('stats-items'); box.innerHTML='';
       items.forEach(function(it){
         var row=document.createElement('div'); row.className='item';
@@ -677,13 +789,16 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
       case 'go-find': go('find'); break;
       case 'go-rest': go('rest'); break;
       case 'go-stats': go('stats'); break;
-      case 'size': schulte.resetGame(Number(el.dataset.size)); break;
+      case 'level':
+        if(el.dataset.module==='schulte') schulte.resetGame(Number(el.dataset.index));
+        else if(el.dataset.module==='stroop') stroop.resetGame(Number(el.dataset.index));
+        break;
       case 'cell':
         if(current==='schulte') schulte.onTapCell(Number(el.dataset.index));
         else if(current==='find') find.onTapCell(Number(el.dataset.index));
         break;
       case 'option': stroop.onTap(el.dataset.key); break;
-      case 'schulte-restart': schulte.resetGame(schulte.size); break;
+      case 'schulte-restart': schulte.resetGame(schulte.levelIndex); break;
       case 'stroop-restart': stroop.startGame(); break;
       case 'find-restart': find.resetGame(); break;
       case 'rest-start': rest.startRest(); break;
