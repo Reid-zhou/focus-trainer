@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#FFB84D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="专注小达人">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>专注小达人 · 注意力训练</title>
+<style>
+:root{
+  --main:#FFB84D; --main-d:#F79A2E; --bg1:#FFF7EC; --bg2:#FFE6C2;
+  --ink:#5A4A35; --ink2:#9C8B72; --green:#3FBF6E; --red:#FF6B6B; --card:#FFFFFF;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; padding:0; font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; color:var(--ink);}
+body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;}
+.app{max-width:480px; margin:0 auto; padding:0 0 32px; position:relative;}
+.page{display:none; padding:20px 18px 0;}
+.page.active{display:block; animation:fade .25s ease;}
+@keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+
+/* 顶部栏 */
+.topbar{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+.back{border:none; background:rgba(255,255,255,.7); color:var(--ink); font-size:15px; padding:8px 14px; border-radius:14px; cursor:pointer;}
+.ptitle{font-size:18px; font-weight:700;}
+
+/* 头部 */
+.header{text-align:center; padding:14px 0 6px;}
+.mascot{font-size:54px; line-height:1;}
+.title{font-size:30px; font-weight:800; color:var(--main-d); margin-top:4px; letter-spacing:1px;}
+.subtitle{font-size:14px; color:var(--ink2); margin-top:6px;}
+
+/* 游戏卡片 */
+.game-list{display:flex; flex-direction:column; gap:12px; margin-top:14px;}
+.game-card{display:flex; align-items:center; gap:14px; background:var(--card); border-radius:22px; padding:16px 18px; box-shadow:0 6px 18px rgba(255,184,77,.18); cursor:pointer; transition:transform .08s;}
+.game-card:active{transform:scale(.98);}
+.game-emoji{font-size:36px; width:50px; text-align:center;}
+.game-info{flex:1;}
+.game-name{font-size:18px; font-weight:700;}
+.game-desc{font-size:13px; color:var(--ink2); margin-top:3px;}
+.game-arrow{font-size:26px; color:var(--main);}
+.rest-card{background:linear-gradient(135deg,#E8F8EF,#D6F2E4);}
+.rest-card .game-arrow{color:var(--green);}
+
+/* 成就入口 */
+.stats-entry{display:flex; align-items:center; justify-content:space-between; background:linear-gradient(135deg,#FFF3DC,#FFE3B8); border-radius:22px; padding:16px 20px; margin-top:14px; cursor:pointer;}
+.stats-left{display:flex; align-items:center; gap:10px;}
+.stats-emoji{font-size:26px;}
+.stats-text{font-size:17px; font-weight:700;}
+.stats-right{font-size:14px; color:var(--ink2);}
+
+/* 提示 */
+.tip{text-align:center; font-size:13px; color:var(--ink2); margin-top:16px;}
+.tip-eyes{background:rgba(63,191,110,.12); color:#2F8F54; border-radius:14px; padding:10px 12px; margin-top:10px;}
+
+/* 计时 */
+.timer{text-align:center; font-size:34px; font-weight:800; color:var(--main-d); font-variant-numeric:tabular-nums; margin:8px 0;}
+.hint{text-align:center; font-size:13px; color:var(--ink2); margin-top:10px;}
+
+/* 尺寸选择 */
+.size-row{display:flex; gap:10px; justify-content:center; margin:10px 0;}
+.size-btn{border:2px solid #FFE0B0; background:#FFF; color:var(--ink); font-size:15px; font-weight:700; padding:9px 16px; border-radius:16px; cursor:pointer;}
+.size-btn.active{background:var(--main); border-color:var(--main); color:#fff;}
+
+/* 网格 */
+.grid{display:grid; grid-template-columns:repeat(var(--n,3),1fr); gap:10px; margin:14px auto; max-width:360px;}
+.cell{aspect-ratio:1; display:flex; align-items:center; justify-content:center; background:#FFF; border-radius:18px; font-weight:800; color:var(--ink); box-shadow:0 4px 12px rgba(0,0,0,.06); cursor:pointer; user-select:none;}
+.cell:active{transform:scale(.96);}
+.cell.done{background:#DCF5E6; color:transparent; box-shadow:none; cursor:default;}
+.cell.found{background:#DCF5E6;}
+.grid.shake{animation:shake .32s;}
+@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-6px);}80%{transform:translateX(6px);}}
+
+/* 结果 */
+.result{display:none; text-align:center; background:#FFF; border-radius:20px; padding:18px; margin-top:14px; box-shadow:0 6px 18px rgba(255,184,77,.18);}
+.result.show{display:block;}
+.result .big{font-size:26px; font-weight:800; color:var(--main-d);}
+.result .sub{font-size:14px; color:var(--ink2); margin-top:6px;}
+.result .record{font-size:15px; color:var(--green); font-weight:700; margin-top:8px;}
+
+/* 按钮 */
+.row-btns{display:flex; gap:12px; justify-content:center; margin-top:16px;}
+.btn{border:none; border-radius:18px; padding:13px 22px; font-size:16px; font-weight:700; cursor:pointer; width:100%;}
+.btn:active{transform:scale(.98);}
+.btn-primary{background:var(--main); color:#fff;}
+.btn-secondary{background:#FFF; color:var(--ink); box-shadow:0 4px 12px rgba(0,0,0,.06);}
+.btn-danger{background:#FF6B6B; color:#fff; margin-top:14px;}
+.btn-hover{}
+
+/* Stroop */
+.stroop-progress{height:10px; background:#FFE9C7; border-radius:8px; overflow:hidden; margin:8px 0;}
+.stroop-progress>i{display:block; height:100%; width:0; background:var(--main); transition:width .15s;}
+.stroop-meta{display:flex; justify-content:space-between; font-size:14px; color:var(--ink2); margin:6px 2px;}
+.stroop-word{text-align:center; font-size:78px; font-weight:900; margin:18px 0 6px;}
+.stroop-feedback{text-align:center; font-size:18px; font-weight:700; height:26px;}
+.stroop-feedback.right{color:var(--green);}
+.stroop-feedback.wrong{color:var(--red);}
+.stroop-options{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:18px;}
+.opt-btn{border:none; border-radius:20px; padding:26px 0; font-size:24px; font-weight:800; color:#fff; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.12);}
+.opt-btn:active{transform:scale(.97);}
+
+/* 找一找 */
+.find-tip{text-align:center; font-size:17px; font-weight:700; margin:10px 0;}
+
+/* 护眼 */
+.rest-ring{width:170px; height:170px; border-radius:50%; margin:22px auto 8px; background:conic-gradient(var(--green) var(--p,0%), #E6F4EC 0); display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:0 8px 22px rgba(63,191,110,.25);}
+.rest-seconds{font-size:60px; font-weight:900; color:#2F8F54; line-height:1;}
+.rest-unit{font-size:14px; color:#2F8F54;}
+.rest-tip{text-align:center; font-size:17px; font-weight:700; color:#2F8F54; margin:14px 18px; min-height:48px;}
+.rest-bar{height:12px; background:#E6F4EC; border-radius:8px; overflow:hidden; margin:14px 8px;}
+.rest-bar>i{display:block; height:100%; width:0; background:var(--green); transition:width .1s linear;}
+.btn-row{margin-top:18px;}
+
+/* 成就 */
+.total-card{text-align:center; background:linear-gradient(135deg,#FFF3DC,#FFE3B8); border-radius:22px; padding:18px; margin:14px 0;}
+.total-label{font-size:14px; color:var(--ink2);}
+.total-value{font-size:46px; font-weight:900; color:var(--main-d); line-height:1.1;}
+.total-unit{font-size:13px; color:var(--ink2);}
+.card{background:#FFF; border-radius:22px; padding:16px 18px; box-shadow:0 6px 18px rgba(255,184,77,.15); margin-bottom:6px;}
+.list-title{font-size:15px; font-weight:700; margin-bottom:8px;}
+.item{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid #F4EEE2;}
+.item:last-child{border-bottom:none;}
+.item-emoji{font-size:24px; width:34px; text-align:center;}
+.item-main{flex:1;}
+.item-name{font-size:15px; font-weight:600;}
+.item-unit{font-size:12px; color:var(--ink2);}
+.item-value{font-size:16px; font-weight:800; color:var(--main-d);}
+
+/* Toast */
+.toast{position:fixed; left:50%; bottom:80px; transform:translateX(-50%) translateY(20px); background:rgba(90,74,53,.92); color:#fff; padding:11px 20px; border-radius:20px; font-size:14px; opacity:0; pointer-events:none; transition:.25s; z-index:99; white-space:nowrap;}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 首页 -->
+  <section id="page-index" class="page active">
+    <div class="header">
+      <div class="mascot">🦉</div>
+      <div class="title">专注小达人</div>
+      <div class="subtitle" id="index-slogan">一起练出超强专注力！</div>
+    </div>
+    <div class="game-list" id="index-games"></div>
+    <div class="game-card rest-card" data-action="go-rest">
+      <div class="game-emoji">👀</div>
+      <div class="game-info"><div class="game-name">护眼休息</div><div class="game-desc">看屏幕久了，远眺 20 秒</div></div>
+      <div class="game-arrow">›</div>
+    </div>
+    <div class="stats-entry" data-action="go-stats">
+      <div class="stats-left"><span class="stats-emoji">🏆</span><span class="stats-text">我的成就</span></div>
+      <div class="stats-right" id="index-playcount">已玩 0 次 ›</div>
+    </div>
+    <div class="tip">小提示：安静的地方玩，效果更好哦～</div>
+    <div class="tip tip-eyes">💡 护眼口诀：看屏幕 20 分钟，远眺 20 秒，眼睛更明亮～</div>
+  </section>
+
+  <!-- 舒尔特方格 -->
+  <section id="page-schulte" class="page">
+    <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">舒尔特方格</div></div>
+    <div class="size-row" id="schulte-sizes"></div>
+    <div class="timer" id="schulte-timer">00:00</div>
+    <div class="grid" id="schulte-grid"></div>
+    <div class="result" id="schulte-result"></div>
+    <div class="row-btns"><button class="btn btn-secondary" data-action="schulte-restart">重新开始</button></div>
+    <div class="hint" id="schulte-hint">按 1、2、3… 的顺序点击，点错也不怕～</div>
+  </section>
+
+  <!-- 颜色挑战 -->
+  <section id="page-stroop" class="page">
+    <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">颜色挑战</div></div>
+    <div class="stroop-progress"><i id="stroop-bar"></i></div>
+    <div class="stroop-meta"><span id="stroop-current">1 / 20</span><span>最高 <span id="stroop-best">0</span></span></div>
+    <div class="stroop-word" id="stroop-word">红</div>
+    <div class="stroop-feedback" id="stroop-feedback"></div>
+    <div class="stroop-options" id="stroop-options"></div>
+    <div class="result" id="stroop-result"></div>
+    <div class="row-btns"><button class="btn btn-secondary" data-action="stroop-restart" id="stroop-restart" style="display:none">再来一局</button></div>
+  </section>
+
+  <!-- 找一找 -->
+  <section id="page-find" class="page">
+    <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">找一找</div></div>
+    <div class="find-tip" id="find-tip">找出所有的 🌟</div>
+    <div class="timer" id="find-timer">00:00</div>
+    <div class="grid" id="find-grid"></div>
+    <div class="result" id="find-result"></div>
+    <div class="row-btns"><button class="btn btn-secondary" data-action="find-restart">换一批</button></div>
+  </section>
+
+  <!-- 护眼休息 -->
+  <section id="page-rest" class="page">
+    <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">护眼休息</div></div>
+    <div class="rest-ring" id="rest-ring"><div class="rest-seconds" id="rest-seconds">20</div><div class="rest-unit">秒</div></div>
+    <div class="rest-tip" id="rest-tip">抬起头，看 6 米以外的远处 ⛰️</div>
+    <div class="rest-bar"><i id="rest-bar"></i></div>
+    <div class="btn-row"><button class="btn btn-primary" data-action="rest-start" id="rest-start">开始远眺休息</button></div>
+    <div class="result" id="rest-result"></div>
+    <div class="btn-row" style="margin-top:12px;"><button class="btn btn-secondary" data-action="rest-again" id="rest-again" style="display:none">再休息一次</button></div>
+    <div class="tip">已休息 <span id="rest-count">0</span> 次</div>
+  </section>
+
+  <!-- 我的成就 -->
+  <section id="page-stats" class="page">
+    <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">我的成就</div></div>
+    <div class="title" style="text-align:center;">🏆 我的成就</div>
+    <div class="subtitle" id="stats-praise" style="text-align:center;">开始你的第一局吧！</div>
+    <div class="total-card"><div class="total-label">总游戏次数</div><div class="total-value" id="stats-playcount">0</div><div class="total-unit">次</div></div>
+    <div class="card"><div class="list-title">最佳成绩</div><div id="stats-items"></div></div>
+    <button class="btn btn-danger" data-action="stats-clear">清除记录</button>
+  </section>
+
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ===================== 本地存储（localStorage 版，逻辑同小程序） ===================== */
+  var ROOT_KEY = 'focus_trainer_data';
+  var BEST_KEYS = ['schulte3','schulte4','schulte5','find'];
+  var SCORE_KEYS = ['stroop'];
+  function defaultData(){
+    var best={}, score={};
+    BEST_KEYS.forEach(function(k){ best[k]=0; });
+    SCORE_KEYS.forEach(function(k){ score[k]=0; });
+    return { playCount:0, best:best, score:score, restCount:0 };
+  }
+  function readAll(){
+    var raw=null;
+    try{ raw=JSON.parse(localStorage.getItem(ROOT_KEY)); }catch(e){ raw=null; }
+    if(!raw || typeof raw!=='object') return defaultData();
+    var base=defaultData();
+    return {
+      playCount: typeof raw.playCount==='number'?raw.playCount:base.playCount,
+      best: Object.assign({}, base.best, raw.best&&typeof raw.best==='object'?raw.best:{}),
+      score: Object.assign({}, base.score, raw.score&&typeof raw.score==='object'?raw.score:{}),
+      restCount: typeof raw.restCount==='number'?raw.restCount:base.restCount
+    };
+  }
+  function writeAll(d){ try{ localStorage.setItem(ROOT_KEY, JSON.stringify(d)); return true; }catch(e){ return false; } }
+  function getBest(k){ var d=readAll(); return typeof d.best[k]==='number'?d.best[k]:0; }
+  function setBest(k,v){
+    if(typeof v!=='number'||!isFinite(v)||v<=0) return false;
+    var d=readAll(); var old=typeof d.best[k]==='number'?d.best[k]:0;
+    if(old===0||v<old){ d.best[k]=v; writeAll(d); return true; }
+    return false;
+  }
+  function getScore(k){ var d=readAll(); return typeof d.score[k]==='number'?d.score[k]:0; }
+  function setScore(k,v){
+    if(typeof v!=='number'||!isFinite(v)||v<0) return false;
+    var d=readAll(); var old=typeof d.score[k]==='number'?d.score[k]:0;
+    if(v>old){ d.score[k]=v; writeAll(d); return true; }
+    return false;
+  }
+  function incrPlayCount(){ var d=readAll(); d.playCount=(typeof d.playCount==='number'?d.playCount:0)+1; writeAll(d); return d.playCount; }
+  function getRestCount(){ return readAll().restCount||0; }
+  function incrRestCount(){ var d=readAll(); d.restCount=(typeof d.restCount==='number'?d.restCount:0)+1; writeAll(d); return d.restCount; }
+  function getStats(){
+    var d=readAll();
+    return {
+      playCount:d.playCount,
+      bestSchulte3:d.best.schulte3||0, bestSchulte4:d.best.schulte4||0, bestSchulte5:d.best.schulte5||0,
+      bestFind:d.best.find||0, bestStroop:d.score.stroop||0, restCount:d.restCount||0
+    };
+  }
+  function clearAll(){ try{ localStorage.removeItem(ROOT_KEY); }catch(e){} return writeAll(defaultData()); }
+  function formatTime(ms){
+    var safe=typeof ms==='number'&&ms>0?ms:0;
+    var t=Math.floor(safe/1000); var m=Math.floor(t/60); var s=t%60;
+    return (m<10?'0'+m:m)+':'+(s<10?'0'+s:s);
+  }
+  function formatSeconds(ms){
+    if(typeof ms!=='number'||ms<=0) return '暂无';
+    return (ms/1000).toFixed(1)+' 秒';
+  }
+  var store={ getBest:getBest,setBest:setBest,getScore:getScore,setScore:setScore,incrPlayCount:incrPlayCount,getRestCount:getRestCount,incrRestCount:incrRestCount,getStats:getStats,clearAll:clearAll,formatTime:formatTime,formatSeconds:formatSeconds };
+
+  /* ===================== 工具 ===================== */
+  function $(id){ return document.getElementById(id); }
+  function shuffle(arr){
+    var r=arr.slice();
+    for(var i=r.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=r[i]; r[i]=r[j]; r[j]=t; }
+    return r;
+  }
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function vibrate(){ if(navigator.vibrate){ try{ navigator.vibrate(30); }catch(e){} } }
+  var toastTimer=null;
+  function toast(msg){
+    var t=$('toast'); t.textContent=msg; t.classList.add('show');
+    clearTimeout(toastTimer); toastTimer=setTimeout(function(){ t.classList.remove('show'); },1500);
+  }
+
+  /* ===================== 路由 ===================== */
+  var PAGES=['index','schulte','stroop','find','rest','stats'];
+  var enterMap={}, leaveMap={};
+  var current='index';
+  function go(page){
+    if(leaveMap[current]) leaveMap[current]();
+    PAGES.forEach(function(p){ $('page-'+p).classList.remove('active'); });
+    $('page-'+page).classList.add('active');
+    current=page;
+    if(enterMap[page]) enterMap[page]();
+  }
+
+  /* ===================== 首页 ===================== */
+  var GAMES=[
+    { key:'schulte', name:'舒尔特方格', emoji:'🔢', desc:'按顺序点数字，越快越棒' },
+    { key:'stroop', name:'颜色挑战', emoji:'🎨', desc:'点“字的颜色”，别被字骗了' },
+    { key:'find', name:'找一找', emoji:'🔍', desc:'找出所有的目标图案' }
+  ];
+  var index={
+    enter:function(){
+      var box=$('index-games'); box.innerHTML='';
+      GAMES.forEach(function(g){
+        var c=document.createElement('div'); c.className='game-card'; c.dataset.action='go-'+g.key;
+        c.innerHTML='<div class="game-emoji">'+g.emoji+'</div><div class="game-info"><div class="game-name">'+g.name+'</div><div class="game-desc">'+g.desc+'</div></div><div class="game-arrow">›</div>';
+        box.appendChild(c);
+      });
+      var s=store.getStats();
+      $('index-playcount').textContent='已玩 '+s.playCount+' 次 ›';
+    }
+  };
+
+  /* ===================== 舒尔特方格 ===================== */
+  var schulte={
+    size:3, total:9, cells:[], next:1, playing:false, finished:false, wrongCount:0,
+    _accum:0, _startAt:0, _timer:null, _shake:null, inited:false,
+    enter:function(){
+      if(!this.inited){ this.inited=true; this.resetGame(3); }
+      else if(this.playing && !this.finished){ this.startTimer(); }
+    },
+    leave:function(){ this.pauseTimer(); this.clearShake(); },
+    resetGame:function(size){
+      this.stopTimer(); this.clearShake(); this._accum=0; this._startAt=0;
+      this.size=size; this.total=size*size; this.next=1; this.playing=false; this.finished=false; this.wrongCount=0;
+      var nums=[]; for(var i=1;i<=this.total;i++) nums.push(i);
+      this.cells=shuffle(nums).map(function(n){ return {value:n,done:false}; });
+      this.renderAll(); this.renderTimer('00:00');
+      $('schulte-result').classList.remove('show');
+    },
+    renderSizes:function(){
+      var sr=$('schulte-sizes'); sr.innerHTML='';
+      [3,4,5].forEach(function(s){
+        var b=document.createElement('button'); b.className='size-btn'+(s===schulte.size?' active':'');
+        b.textContent=s+'×'+s; b.dataset.action='size'; b.dataset.size=s; sr.appendChild(b);
+      });
+    },
+    renderGrid:function(){
+      var g=$('schulte-grid'); g.innerHTML=''; g.style.setProperty('--n',this.size);
+      var fs=this.size>=5?'42px':(this.size===4?'54px':'70px');
+      this.cells.forEach(function(c,i){
+        var d=document.createElement('div'); d.className='cell'+(c.done?' done':'');
+        d.style.fontSize=fs; d.textContent=c.done?'':c.value;
+        d.dataset.action='cell'; d.dataset.index=i; g.appendChild(d);
+      });
+    },
+    renderAll:function(){ this.renderSizes(); this.renderGrid(); },
+    renderTimer:function(t){ $('schulte-timer').textContent=t; },
+    startTimer:function(){
+      var self=this; this.stopTimer(); this._startAt=Date.now();
+      this._timer=setInterval(function(){
+        var el=self._accum+(Date.now()-self._startAt);
+        self.renderTimer(store.formatTime(el));
+      },100);
+    },
+    pauseTimer:function(){ if(this._timer){ this._accum+=Date.now()-this._startAt; this.stopTimer(); } },
+    stopTimer:function(){ if(this._timer){ clearInterval(this._timer); this._timer=null; } },
+    clearShake:function(){ if(this._shake){ clearTimeout(this._shake); this._shake=null; } $('schulte-grid').classList.remove('shake'); },
+    onTapCell:function(i){
+      if(this.finished) return;
+      var c=this.cells[i]; if(!c||c.done) return;
+      if(!this.playing){ this.playing=true; this.startTimer(); }
+      if(c.value===this.next){
+        c.done=true; this.next++;
+        var d=$('schulte-grid').children[i]; d.classList.add('done'); d.textContent='';
+        if(this.next>this.total){ this.finish(); }
+      } else { this.onWrong(); }
+    },
+    onWrong:function(){
+      this.wrongCount++; vibrate();
+      var g=$('schulte-grid'); g.classList.add('shake');
+      var self=this; this.clearShake(); this._shake=setTimeout(function(){ g.classList.remove('shake'); },340);
+    },
+    finish:function(){
+      this.pauseTimer(); var used=this._accum;
+      var key='schulte'+this.size;
+      var isNew=store.setBest(key,used); store.incrPlayCount();
+      this.finished=true; this.playing=false;
+      this.renderTimer(store.formatTime(used));
+      var r=$('schulte-result');
+      r.innerHTML='<div class="big">'+store.formatSeconds(used)+'</div>'+
+        '<div class="sub">点错 '+this.wrongCount+' 次 · 历史最佳 '+store.formatSeconds(store.getBest(key))+'</div>'+
+        '<div class="record">'+(isNew?'新纪录！⭐⭐⭐':'太棒了！⭐')+'</div>';
+      r.classList.add('show');
+      toast(isNew?'新纪录！⭐':'太棒了！⭐');
+    }
+  };
+
+  /* ===================== 颜色挑战（Stroop） ===================== */
+  var COLORS=[
+    {key:'red',label:'红',hex:'#FF5A5A'},
+    {key:'blue',label:'蓝',hex:'#4A90E2'},
+    {key:'green',label:'绿',hex:'#3FBF6E'},
+    {key:'yellow',label:'黄',hex:'#F5B301'}
+  ];
+  var TOTAL_Q=20;
+  function makeQuestion(){
+    var word=pick(COLORS);
+    var others=COLORS.filter(function(c){ return c.key!==word.key; });
+    var shown=pick(others);
+    return { wordLabel:word.label, colorKey:shown.key, colorHex:shown.hex };
+  }
+  var stroop={
+    current:1, score:0, question:null, options:[], finished:false, locked:false, feedback:'', fbType:'',
+    _timer:null, inited:false,
+    enter:function(){
+      if(!this.inited){ this.inited=true; this.startGame(); }
+    },
+    leave:function(){ this.clearTimer(); },
+    clearTimer:function(){ if(this._timer){ clearTimeout(this._timer); this._timer=null; } },
+    startGame:function(){
+      this.clearTimer(); this.current=1; this.score=0; this.finished=false; this.locked=false;
+      this.feedback=''; this.fbType=''; this.question=makeQuestion(); this.options=shuffle(COLORS);
+      this.render();
+    },
+    render:function(){
+      if(this.question){
+        var w=$('stroop-word'); w.textContent=this.question.wordLabel; w.style.color=this.question.colorHex;
+      }
+      $('stroop-current').textContent=this.current+' / '+TOTAL_Q;
+      $('stroop-best').textContent=store.getScore('stroop');
+      $('stroop-bar').style.width=((this.current-1)/TOTAL_Q*100)+'%';
+      var fb=$('stroop-feedback'); fb.textContent=this.feedback; fb.className='stroop-feedback '+(this.fbType||'');
+      var box=$('stroop-options'); box.innerHTML='';
+      if(!this.finished){
+        this.options.forEach(function(o){
+          var b=document.createElement('button'); b.className='opt-btn'; b.style.background=o.hex;
+          b.textContent=o.label; b.dataset.action='option'; b.dataset.key=o.key; box.appendChild(b);
+        });
+      }
+      if(this.finished){
+        var r=$('stroop-result');
+        var acc=Math.round(this.score/TOTAL_Q*100);
+        var praise = acc>=90?'专注力超强，火眼金睛！🔥' : acc>=70?'不错哦，再练更厉害！💪' : '别灰心，多玩几次就熟啦～🌟';
+        r.innerHTML='<div class="big">'+this.score+' / '+TOTAL_Q+'</div>'+
+          '<div class="sub">正确率 '+acc+'% · 历史最高 '+store.getScore('stroop')+' / '+TOTAL_Q+'</div>'+
+          '<div class="record">'+(this.isNew?'新纪录！⭐':praise)+'</div>';
+        r.classList.add('show');
+        $('stroop-restart').style.display='';
+      } else {
+        $('stroop-result').classList.remove('show');
+        $('stroop-restart').style.display='none';
+      }
+    },
+    onTap:function(key){
+      if(this.finished||this.locked) return;
+      var right=key===this.question.colorKey;
+      if(!right) vibrate();
+      if(right) this.score++;
+      this.feedback=right?'答对啦 ✅':'答错咯 ❌ 要看“字的颜色”';
+      this.fbType=right?'right':'wrong'; this.locked=true; this.render();
+      var self=this; this._timer=setTimeout(function(){ self.next(); },420);
+    },
+    next:function(){
+      this.clearTimer();
+      if(this.current>=TOTAL_Q){ this.finish(); return; }
+      this.current++; this.question=makeQuestion(); this.options=shuffle(COLORS);
+      this.feedback=''; this.fbType=''; this.locked=false; this.render();
+    },
+    finish:function(){
+      var s=this.score; this.isNew=store.setScore('stroop',s); store.incrPlayCount();
+      this.finished=true; this.feedback=''; this.fbType=''; this.render();
+      toast(this.isNew?'新纪录！⭐':'完成啦！⭐');
+    }
+  };
+
+  /* ===================== 找一找 ===================== */
+  var EMOJI_POOL=['🌟','🍎','🐱','🌸','🐟','🎈','🍀','🐝','🍄','⚽️'];
+  var GRID=4, TARGET_COUNT=4;
+  var find={
+    size:GRID, target:'🌟', cells:[], foundCount:0, playing:false, finished:false, wrongCount:0,
+    _accum:0, _startAt:0, _timer:null, _shake:null, inited:false,
+    enter:function(){
+      if(!this.inited){ this.inited=true; this.resetGame(); }
+      else if(this.playing && !this.finished){ this.startTimer(); }
+    },
+    leave:function(){ this.pauseTimer(); this.clearShake(); },
+    resetGame:function(){
+      this.stopTimer(); this.clearShake(); this._accum=0; this._startAt=0;
+      this.foundCount=0; this.playing=false; this.finished=false; this.wrongCount=0;
+      var pool=shuffle(EMOJI_POOL); this.target=pool[0]; var distractors=pool.slice(1);
+      var total=GRID*GRID; var cells=[];
+      for(var i=0;i<TARGET_COUNT;i++) cells.push({emoji:this.target,isTarget:true,found:false});
+      for(var j=0;j<total-TARGET_COUNT;j++) cells.push({emoji:distractors[j%distractors.length],isTarget:false,found:false});
+      this.cells=shuffle(cells);
+      this.renderAll(); this.renderTimer('00:00');
+      $('find-result').classList.remove('show');
+      $('find-tip').textContent='找出所有的 '+this.target;
+    },
+    renderGrid:function(){
+      var g=$('find-grid'); g.innerHTML=''; g.style.setProperty('--n',this.size);
+      var self=this;
+      this.cells.forEach(function(c,i){
+        var d=document.createElement('div'); d.className='cell'+(c.found?' found':'');
+        d.style.fontSize='40px'; d.textContent=c.found?'✅':c.emoji;
+        d.dataset.action='cell'; d.dataset.index=i; g.appendChild(d);
+      });
+    },
+    renderAll:function(){ this.renderGrid(); },
+    renderTimer:function(t){ $('find-timer').textContent=t; },
+    startTimer:function(){
+      var self=this; this.stopTimer(); this._startAt=Date.now();
+      this._timer=setInterval(function(){ self.renderTimer(store.formatTime(self._accum+(Date.now()-self._startAt))); },100);
+    },
+    pauseTimer:function(){ if(this._timer){ this._accum+=Date.now()-this._startAt; this.stopTimer(); } },
+    stopTimer:function(){ if(this._timer){ clearInterval(this._timer); this._timer=null; } },
+    clearShake:function(){ if(this._shake){ clearTimeout(this._shake); this._shake=null; } $('find-grid').classList.remove('shake'); },
+    onTapCell:function(i){
+      if(this.finished) return;
+      var c=this.cells[i]; if(!c||c.found) return;
+      if(!this.playing){ this.playing=true; this.startTimer(); }
+      if(c.isTarget){
+        c.found=true; this.foundCount++;
+        var d=$('find-grid').children[i]; d.classList.add('found'); d.textContent='✅';
+        if(this.foundCount>=TARGET_COUNT){ this.finish(); }
+      } else { this.onWrong(); }
+    },
+    onWrong:function(){
+      this.wrongCount++; vibrate();
+      var g=$('find-grid'); g.classList.add('shake');
+      var self=this; this.clearShake(); this._shake=setTimeout(function(){ g.classList.remove('shake'); },340);
+    },
+    finish:function(){
+      this.pauseTimer(); var used=this._accum;
+      var isNew=store.setBest('find',used); store.incrPlayCount();
+      this.finished=true; this.playing=false; this.renderTimer(store.formatTime(used));
+      var star=1;
+      if(used<=12000 && this.wrongCount<=1) star=3;
+      else if(used<=20000 && this.wrongCount<=3) star=2;
+      var stars=''; for(var k=0;k<star;k++) stars+='⭐';
+      var r=$('find-result');
+      r.innerHTML='<div class="big">'+store.formatSeconds(used)+'</div>'+
+        '<div class="sub">点错 '+this.wrongCount+' 次 · 历史最佳 '+store.formatSeconds(store.getBest('find'))+'</div>'+
+        '<div class="record">'+stars+(isNew?' · 新纪录！':'')+'</div>';
+      r.classList.add('show');
+      toast(isNew?'新纪录！⭐':'全找到啦！⭐');
+    }
+  };
+
+  /* ===================== 护眼休息 ===================== */
+  var REST_MS=20000;
+  var TIPS=[
+    '抬起头，看 6 米以外的远处 ⛰️',
+    '慢慢眨眼 20 次，让眼睛湿润 👀',
+    '转动眼球：上、下、左、右 🔄',
+    '把手心搓热，轻轻敷在眼睛上 🤲',
+    '深呼吸，放松肩膀和脖子 🌿'
+  ];
+  var rest={
+    running:false, finished:false, _accum:0, _startAt:0, _timer:null, _tip:null, _tipIdx:0, inited:false,
+    enter:function(){
+      if(!this.inited){ this.inited=true; $('rest-count').textContent=store.getRestCount(); }
+      else if(this.running && !this.finished){ this.startTimer(); }
+    },
+    leave:function(){ this.pauseTimer(); this.clearTip(); },
+    startRest:function(){
+      if(this.running) return;
+      this._tipIdx=0; this._accum=0; this._startAt=0;
+      this.running=true; this.finished=false;
+      $('rest-seconds').textContent=20; $('rest-bar').style.width='0%'; $('rest-ring').style.setProperty('--p','0%');
+      $('rest-tip').textContent=TIPS[0];
+      $('rest-start').style.display='none'; $('rest-again').style.display='none'; $('rest-result').classList.remove('show');
+      this.startTimer(); this.startTipRotate();
+    },
+    startTimer:function(){
+      var self=this; this.stopTimer(); this._startAt=Date.now();
+      this._timer=setInterval(function(){
+        var el=self._accum+(Date.now()-self._startAt);
+        var remain=Math.max(0,REST_MS-el);
+        var p=Math.min(100,el/REST_MS*100);
+        $('rest-seconds').textContent=Math.ceil(remain/1000);
+        $('rest-bar').style.width=p+'%'; $('rest-ring').style.setProperty('--p',p+'%');
+        if(remain<=0) self.finish();
+      },100);
+    },
+    pauseTimer:function(){ if(this._timer){ this._accum+=Date.now()-this._startAt; this.stopTimer(); } },
+    stopTimer:function(){ if(this._timer){ clearInterval(this._timer); this._timer=null; } },
+    startTipRotate:function(){
+      var self=this; this.clearTip();
+      this._tip=setInterval(function(){ self._tipIdx=(self._tipIdx+1)%TIPS.length; $('rest-tip').textContent=TIPS[self._tipIdx]; },4000);
+    },
+    clearTip:function(){ if(this._tip){ clearInterval(this._tip); this._tip=null; } },
+    finish:function(){
+      this.pauseTimer(); this.clearTip();
+      var count=store.incrRestCount();
+      this.running=false; this.finished=true;
+      $('rest-seconds').textContent=0; $('rest-bar').style.width='100%'; $('rest-ring').style.setProperty('--p','100%');
+      $('rest-tip').textContent='休息完成！眼睛更舒服啦～🌟';
+      $('rest-count').textContent=count;
+      $('rest-again').style.display='';
+      var r=$('rest-result');
+      r.innerHTML='<div class="big">休息完成！</div><div class="sub">已累计护眼 '+count+' 次，眼睛更明亮～🌟</div>';
+      r.classList.add('show');
+      toast('眼睛放松啦～🌟');
+    }
+  };
+
+  /* ===================== 我的成就 ===================== */
+  function buildPraise(c){
+    if(c<=0) return '开始你的第一局吧！';
+    if(c<5) return '不错的开始，继续加油！';
+    if(c<20) return '坚持得很好，专注力在变强！';
+    return '你已经是专注小达人啦！🏆';
+  }
+  var stats={
+    enter:function(){
+      var s=store.getStats();
+      $('stats-playcount').textContent=s.playCount;
+      $('stats-praise').textContent=buildPraise(s.playCount);
+      var items=[
+        {emoji:'🔢',name:'舒尔特 3×3',unit:'最快用时',value:store.formatSeconds(s.bestSchulte3)},
+        {emoji:'🔢',name:'舒尔特 4×4',unit:'最快用时',value:store.formatSeconds(s.bestSchulte4)},
+        {emoji:'🔢',name:'舒尔特 5×5',unit:'最快用时',value:store.formatSeconds(s.bestSchulte5)},
+        {emoji:'🎨',name:'颜色挑战',unit:'最高分',value:s.bestStroop>0?s.bestStroop+' / 20':'暂无'},
+        {emoji:'🔍',name:'找一找',unit:'最快用时',value:store.formatSeconds(s.bestFind)},
+        {emoji:'👀',name:'护眼休息',unit:'累计次数',value:s.restCount>0?s.restCount+' 次':'暂无'}
+      ];
+      var box=$('stats-items'); box.innerHTML='';
+      items.forEach(function(it){
+        var row=document.createElement('div'); row.className='item';
+        row.innerHTML='<div class="item-emoji">'+it.emoji+'</div><div class="item-main"><div class="item-name">'+it.name+'</div><div class="item-unit">'+it.unit+'</div></div><div class="item-value">'+it.value+'</div>';
+        box.appendChild(row);
+      });
+    }
+  };
+
+  /* ===================== 绑定 ===================== */
+  enterMap={ index:index.enter, schulte:schulte.enter, stroop:stroop.enter, find:find.enter, rest:rest.enter, stats:stats.enter };
+  leaveMap={ schulte:schulte.leave, stroop:stroop.leave, find:find.leave, rest:rest.leave };
+
+  document.addEventListener('click', function(e){
+    var el=e.target.closest('[data-action]'); if(!el) return;
+    var a=el.dataset.action;
+    switch(a){
+      case 'back': go('index'); break;
+      case 'go-schulte': go('schulte'); break;
+      case 'go-stroop': go('stroop'); break;
+      case 'go-find': go('find'); break;
+      case 'go-rest': go('rest'); break;
+      case 'go-stats': go('stats'); break;
+      case 'size': schulte.resetGame(Number(el.dataset.size)); break;
+      case 'cell':
+        if(current==='schulte') schulte.onTapCell(Number(el.dataset.index));
+        else if(current==='find') find.onTapCell(Number(el.dataset.index));
+        break;
+      case 'option': stroop.onTap(el.dataset.key); break;
+      case 'schulte-restart': schulte.resetGame(schulte.size); break;
+      case 'stroop-restart': stroop.startGame(); break;
+      case 'find-restart': find.resetGame(); break;
+      case 'rest-start': rest.startRest(); break;
+      case 'rest-again': rest.startRest(); break;
+      case 'stats-clear':
+        if(window.confirm('所有成绩和游戏次数都会被清空，确定吗？')){
+          store.clearAll(); stats.enter(); toast('已清除');
+        }
+        break;
+    }
+  });
+
+  // 进入首页
+  index.enter();
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').then(function () {
+      console.log('[PWA] service worker registered');
+    }).catch(function (e) {
+      console.log('[PWA] sw register failed', e);
+    });
+  });
+}
+</script>
+</body>
+</html>
