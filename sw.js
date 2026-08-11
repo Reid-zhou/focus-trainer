@@ -1,5 +1,5 @@
-// 专注小达人 · Service Worker（让网页 App 可离线、秒开，像原生 App 一样）
-const CACHE = 'focus-trainer-v1';
+// Bella小朋友专属注意力训练APP · Service Worker
+const CACHE = 'focus-trainer-bella-v1';
 const ASSETS = [
   './',
   'index.html',
@@ -7,7 +7,9 @@ const ASSETS = [
   'icons/icon-192.png',
   'icons/icon-512.png',
   'icons/icon-maskable-512.png',
-  'icons/apple-touch-icon.png'
+  'icons/apple-touch-icon.png',
+  'assets/images/home-bg.jpg',
+  'assets/images/avatar.png'
 ];
 
 self.addEventListener('install', function (e) {
@@ -32,7 +34,7 @@ self.addEventListener('activate', function (e) {
   );
 });
 
-// 缓存优先，回退网络（并顺手缓存新资源），两者皆无则用缓存兜底
+// 缓存优先，回退网络（并顺手缓存新资源）
 self.addEventListener('fetch', function (e) {
   if (e.request.method !== 'GET') return;
   e.respondWith(

@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#FFB84D">
+<meta name="theme-color" content="#4A90E2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="专注小达人">
+<meta name="apple-mobile-web-app-title" content="Bella专注力训练">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<title>专注小达人 · 注意力训练</title>
+<title>Bella小朋友专属注意力训练APP</title>
 <style>
 :root{
-  --main:#FFB84D; --main-d:#F79A2E; --bg1:#FFF7EC; --bg2:#FFE6C2;
-  --ink:#5A4A35; --ink2:#9C8B72; --green:#3FBF6E; --red:#FF6B6B; --card:#FFFFFF;
+  --main:#4A90E2; --main-d:#3572BD; --main-l:#EAF3FF; --bg1:#F0F7FF; --bg2:#E0EFFF;
+  --ink:#2E4057; --ink2:#6D8299; --green:#3FBF6E; --red:#FF6B6B; --card:rgba(255,255,255,.96);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 html,body{margin:0; padding:0; font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; color:var(--ink);}
@@ -27,32 +27,42 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 
 /* 顶部栏 */
 .topbar{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
-.back{border:none; background:rgba(255,255,255,.7); color:var(--ink); font-size:15px; padding:8px 14px; border-radius:14px; cursor:pointer;}
-.ptitle{font-size:18px; font-weight:700;}
+.back{border:none; background:rgba(255,255,255,.85); color:var(--ink); font-size:15px; padding:8px 14px; border-radius:14px; cursor:pointer; box-shadow:0 2px 8px rgba(74,144,226,.12);}
+.ptitle{font-size:18px; font-weight:700; color:var(--ink);}
 
-/* 头部 */
-.header{text-align:center; padding:14px 0 6px;}
-.mascot{font-size:54px; line-height:1;}
-.title{font-size:30px; font-weight:800; color:var(--main-d); margin-top:4px; letter-spacing:1px;}
-.subtitle{font-size:14px; color:var(--ink2); margin-top:6px;}
+/* 首页专属背景 */
+.home-bg{position:fixed; top:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; height:420px; background:url('assets/images/home-bg.jpg') center 30%/cover no-repeat; z-index:-2; border-radius:0 0 32px 32px;}
+.home-mask{position:fixed; top:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; height:420px; background:linear-gradient(180deg, rgba(26,70,120,.55) 0%, rgba(26,70,120,.25) 60%, rgba(240,247,255,1) 100%); z-index:-1; border-radius:0 0 32px 32px;}
+
+/* 首页头像与问候 */
+.home-header{display:flex; align-items:center; gap:12px; margin-top:8px;}
+.avatar{width:58px; height:58px; border-radius:50%; object-fit:cover; border:3px solid rgba(255,255,255,.9); box-shadow:0 4px 14px rgba(0,0,0,.2); background:#fff;}
+.home-greeting{flex:1;}
+.home-greeting .hi{font-size:15px; color:rgba(255,255,255,.92); font-weight:600;}
+.home-greeting .name{font-size:22px; color:#fff; font-weight:800; text-shadow:0 2px 8px rgba(0,0,0,.25);}
+
+/* 首页标题区 */
+.hero{text-align:left; margin:24px 0 14px;}
+.hero-title{font-size:26px; font-weight:900; color:#fff; line-height:1.25; text-shadow:0 2px 10px rgba(0,0,0,.3);}
+.hero-sub{font-size:14px; color:rgba(255,255,255,.95); margin-top:8px; text-shadow:0 1px 6px rgba(0,0,0,.25);}
 
 /* 游戏卡片 */
-.game-list{display:flex; flex-direction:column; gap:12px; margin-top:14px;}
-.game-card{display:flex; align-items:center; gap:14px; background:var(--card); border-radius:22px; padding:16px 18px; box-shadow:0 6px 18px rgba(255,184,77,.18); cursor:pointer; transition:transform .08s;}
+.game-list{display:flex; flex-direction:column; gap:12px; margin-top:12px;}
+.game-card{display:flex; align-items:center; gap:14px; background:var(--card); border-radius:22px; padding:16px 18px; box-shadow:0 6px 18px rgba(74,144,226,.16); cursor:pointer; transition:transform .08s; border:1px solid rgba(74,144,226,.08);}
 .game-card:active{transform:scale(.98);}
 .game-emoji{font-size:36px; width:50px; text-align:center;}
 .game-info{flex:1;}
-.game-name{font-size:18px; font-weight:700;}
+.game-name{font-size:18px; font-weight:700; color:var(--ink);}
 .game-desc{font-size:13px; color:var(--ink2); margin-top:3px;}
 .game-arrow{font-size:26px; color:var(--main);}
-.rest-card{background:linear-gradient(135deg,#E8F8EF,#D6F2E4);}
+.rest-card{background:linear-gradient(135deg,#E8F8EF,#D6F2E4); border:1px solid rgba(63,191,110,.12);}
 .rest-card .game-arrow{color:var(--green);}
 
 /* 成就入口 */
-.stats-entry{display:flex; align-items:center; justify-content:space-between; background:linear-gradient(135deg,#FFF3DC,#FFE3B8); border-radius:22px; padding:16px 20px; margin-top:14px; cursor:pointer;}
+.stats-entry{display:flex; align-items:center; justify-content:space-between; background:linear-gradient(135deg,var(--main-l),#D6EAFF); border-radius:22px; padding:16px 20px; margin-top:14px; cursor:pointer; border:1px solid rgba(74,144,226,.12); box-shadow:0 6px 18px rgba(74,144,226,.12);}
 .stats-left{display:flex; align-items:center; gap:10px;}
 .stats-emoji{font-size:26px;}
-.stats-text{font-size:17px; font-weight:700;}
+.stats-text{font-size:17px; font-weight:700; color:var(--main-d);}
 .stats-right{font-size:14px; color:var(--ink2);}
 
 /* 提示 */
@@ -65,20 +75,20 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 
 /* 尺寸选择 */
 .size-row{display:flex; gap:10px; justify-content:center; margin:10px 0;}
-.size-btn{border:2px solid #FFE0B0; background:#FFF; color:var(--ink); font-size:15px; font-weight:700; padding:9px 16px; border-radius:16px; cursor:pointer;}
+.size-btn{border:2px solid #C5DDF7; background:#FFF; color:var(--ink); font-size:15px; font-weight:700; padding:9px 16px; border-radius:16px; cursor:pointer;}
 .size-btn.active{background:var(--main); border-color:var(--main); color:#fff;}
 
 /* 网格 */
 .grid{display:grid; grid-template-columns:repeat(var(--n,3),1fr); gap:10px; margin:14px auto; max-width:360px;}
-.cell{aspect-ratio:1; display:flex; align-items:center; justify-content:center; background:#FFF; border-radius:18px; font-weight:800; color:var(--ink); box-shadow:0 4px 12px rgba(0,0,0,.06); cursor:pointer; user-select:none;}
+.cell{aspect-ratio:1; display:flex; align-items:center; justify-content:center; background:#FFF; border-radius:18px; font-weight:800; color:var(--ink); box-shadow:0 4px 12px rgba(74,144,226,.10); cursor:pointer; user-select:none;}
 .cell:active{transform:scale(.96);}
-.cell.done{background:#DCF5E6; color:transparent; box-shadow:none; cursor:default;}
-.cell.found{background:#DCF5E6;}
+.cell.done{background:#D6F0E0; color:transparent; box-shadow:none; cursor:default;}
+.cell.found{background:#D6F0E0;}
 .grid.shake{animation:shake .32s;}
 @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-6px);}80%{transform:translateX(6px);}}
 
 /* 结果 */
-.result{display:none; text-align:center; background:#FFF; border-radius:20px; padding:18px; margin-top:14px; box-shadow:0 6px 18px rgba(255,184,77,.18);}
+.result{display:none; text-align:center; background:var(--card); border-radius:20px; padding:18px; margin-top:14px; box-shadow:0 6px 18px rgba(74,144,226,.16);}
 .result.show{display:block;}
 .result .big{font-size:26px; font-weight:800; color:var(--main-d);}
 .result .sub{font-size:14px; color:var(--ink2); margin-top:6px;}
@@ -86,15 +96,14 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 
 /* 按钮 */
 .row-btns{display:flex; gap:12px; justify-content:center; margin-top:16px;}
-.btn{border:none; border-radius:18px; padding:13px 22px; font-size:16px; font-weight:700; cursor:pointer; width:100%;}
+.btn{border:none; border-radius:18px; padding:13px 22px; font-size:16px; font-weight:700; cursor:pointer; width:100%; box-shadow:0 4px 12px rgba(74,144,226,.18);}
 .btn:active{transform:scale(.98);}
-.btn-primary{background:var(--main); color:#fff;}
-.btn-secondary{background:#FFF; color:var(--ink); box-shadow:0 4px 12px rgba(0,0,0,.06);}
+.btn-primary{background:linear-gradient(135deg,#5B9CF6,var(--main)); color:#fff;}
+.btn-secondary{background:#FFF; color:var(--ink); box-shadow:0 4px 12px rgba(74,144,226,.10);}
 .btn-danger{background:#FF6B6B; color:#fff; margin-top:14px;}
-.btn-hover{}
 
 /* Stroop */
-.stroop-progress{height:10px; background:#FFE9C7; border-radius:8px; overflow:hidden; margin:8px 0;}
+.stroop-progress{height:10px; background:#D6EAFF; border-radius:8px; overflow:hidden; margin:8px 0;}
 .stroop-progress>i{display:block; height:100%; width:0; background:var(--main); transition:width .15s;}
 .stroop-meta{display:flex; justify-content:space-between; font-size:14px; color:var(--ink2); margin:6px 2px;}
 .stroop-word{text-align:center; font-size:78px; font-weight:900; margin:18px 0 6px;}
@@ -106,7 +115,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 .opt-btn:active{transform:scale(.97);}
 
 /* 找一找 */
-.find-tip{text-align:center; font-size:17px; font-weight:700; margin:10px 0;}
+.find-tip{text-align:center; font-size:17px; font-weight:700; margin:10px 0; color:var(--main-d);}
 
 /* 护眼 */
 .rest-ring{width:170px; height:170px; border-radius:50%; margin:22px auto 8px; background:conic-gradient(var(--green) var(--p,0%), #E6F4EC 0); display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:0 8px 22px rgba(63,191,110,.25);}
@@ -118,34 +127,42 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 .btn-row{margin-top:18px;}
 
 /* 成就 */
-.total-card{text-align:center; background:linear-gradient(135deg,#FFF3DC,#FFE3B8); border-radius:22px; padding:18px; margin:14px 0;}
+.total-card{text-align:center; background:linear-gradient(135deg,var(--main-l),#D6EAFF); border-radius:22px; padding:18px; margin:14px 0; border:1px solid rgba(74,144,226,.12);}
 .total-label{font-size:14px; color:var(--ink2);}
 .total-value{font-size:46px; font-weight:900; color:var(--main-d); line-height:1.1;}
 .total-unit{font-size:13px; color:var(--ink2);}
-.card{background:#FFF; border-radius:22px; padding:16px 18px; box-shadow:0 6px 18px rgba(255,184,77,.15); margin-bottom:6px;}
-.list-title{font-size:15px; font-weight:700; margin-bottom:8px;}
-.item{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid #F4EEE2;}
+.card{background:var(--card); border-radius:22px; padding:16px 18px; box-shadow:0 6px 18px rgba(74,144,226,.14); margin-bottom:6px; border:1px solid rgba(74,144,226,.08);}
+.list-title{font-size:15px; font-weight:700; margin-bottom:8px; color:var(--ink);}
+.item{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid #EAF3FF;}
 .item:last-child{border-bottom:none;}
 .item-emoji{font-size:24px; width:34px; text-align:center;}
 .item-main{flex:1;}
-.item-name{font-size:15px; font-weight:600;}
+.item-name{font-size:15px; font-weight:600; color:var(--ink);}
 .item-unit{font-size:12px; color:var(--ink2);}
 .item-value{font-size:16px; font-weight:800; color:var(--main-d);}
 
 /* Toast */
-.toast{position:fixed; left:50%; bottom:80px; transform:translateX(-50%) translateY(20px); background:rgba(90,74,53,.92); color:#fff; padding:11px 20px; border-radius:20px; font-size:14px; opacity:0; pointer-events:none; transition:.25s; z-index:99; white-space:nowrap;}
+.toast{position:fixed; left:50%; bottom:80px; transform:translateX(-50%) translateY(20px); background:rgba(46,64,87,.92); color:#fff; padding:11px 20px; border-radius:20px; font-size:14px; opacity:0; pointer-events:none; transition:.25s; z-index:99; white-space:nowrap;}
 .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
+<div class="home-bg"></div>
+<div class="home-mask"></div>
 <div class="app">
 
   <!-- 首页 -->
   <section id="page-index" class="page active">
-    <div class="header">
-      <div class="mascot">🦉</div>
-      <div class="title">专注小达人</div>
-      <div class="subtitle" id="index-slogan">一起练出超强专注力！</div>
+    <div class="home-header">
+      <img src="assets/images/avatar.png" class="avatar" alt="Bella头像">
+      <div class="home-greeting">
+        <div class="hi">你好呀～</div>
+        <div class="name">Bella 小朋友</div>
+      </div>
+    </div>
+    <div class="hero">
+      <div class="hero-title">Bella小朋友<br>专属注意力训练APP</div>
+      <div class="hero-sub">每天练一练，专注力越来越棒！</div>
     </div>
     <div class="game-list" id="index-games"></div>
     <div class="game-card rest-card" data-action="go-rest">
@@ -209,7 +226,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   <!-- 我的成就 -->
   <section id="page-stats" class="page">
     <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">我的成就</div></div>
-    <div class="title" style="text-align:center;">🏆 我的成就</div>
+    <div class="title" style="text-align:center; font-size:26px; color:var(--main-d); font-weight:900;">🏆 我的成就</div>
     <div class="subtitle" id="stats-praise" style="text-align:center;">开始你的第一局吧！</div>
     <div class="total-card"><div class="total-label">总游戏次数</div><div class="total-value" id="stats-playcount">0</div><div class="total-unit">次</div></div>
     <div class="card"><div class="list-title">最佳成绩</div><div id="stats-items"></div></div>
