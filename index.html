@@ -70,7 +70,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 .tip-eyes{background:rgba(63,191,110,.12); color:#2F8F54; border-radius:14px; padding:10px 12px; margin-top:10px;}
 
 /* 计时 */
-.timer{text-align:center; font-size:34px; font-weight:800; color:var(--main-d); font-variant-numeric:tabular-nums; margin:8px 0;}
+.timer{text-align:center; font-size:34px; font-weight:800; color:var(--ink); text-shadow:0 1px 2px rgba(46,64,87,.10); font-variant-numeric:tabular-nums; margin:8px 0;}
 .hint{text-align:center; font-size:13px; color:var(--ink2); margin-top:10px;}
 
 /* 尺寸选择 */
@@ -82,7 +82,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 .grid{display:grid; grid-template-columns:repeat(var(--n,3),1fr); gap:10px; margin:14px auto; max-width:360px;}
 .cell{aspect-ratio:1; display:flex; align-items:center; justify-content:center; background:#FFF; border-radius:18px; font-weight:800; color:var(--ink); box-shadow:0 4px 12px rgba(74,144,226,.10); cursor:pointer; user-select:none;}
 .cell:active{transform:scale(.96);}
-.cell.done{background:#D6F0E0; color:transparent; box-shadow:none; cursor:default;}
+.cell.done{background:#CFEFE0; color:var(--ink); box-shadow:none; cursor:default;}
 .cell.found{background:#D6F0E0;}
 .grid.shake{animation:shake .32s;}
 @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-6px);}80%{transform:translateX(6px);}}
@@ -397,7 +397,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
       if(!this.playing){ this.playing=true; this.startTimer(); }
       if(c.value===this.next){
         c.done=true; this.next++;
-        var d=$('schulte-grid').children[i]; d.classList.add('done'); d.textContent='';
+        var d=$('schulte-grid').children[i]; d.classList.add('done'); d.textContent=c.value;
         if(this.next>this.total){ this.finish(); }
       } else { this.onWrong(); }
     },
@@ -439,7 +439,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     current:1, score:0, question:null, options:[], finished:false, locked:false, feedback:'', fbType:'',
     _timer:null, inited:false,
     enter:function(){
-      if(!this.inited){ this.inited=true; this.startGame(); }
+      this.inited=true; this.startGame();
     },
     leave:function(){ this.clearTimer(); },
     clearTimer:function(){ if(this._timer){ clearTimeout(this._timer); this._timer=null; } },
@@ -660,8 +660,12 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   };
 
   /* ===================== 绑定 ===================== */
-  enterMap={ index:index.enter, schulte:schulte.enter, stroop:stroop.enter, find:find.enter, rest:rest.enter, stats:stats.enter };
-  leaveMap={ schulte:schulte.leave, stroop:stroop.leave, find:find.leave, rest:rest.leave };
+  // 用闭包调用模块方法，确保 enter/leave 内的 this 正确指向模块对象
+  // （裸函数引用 enterMap['x']() 会让 this 丢失，导致 this.resetGame is not a function 等崩溃）
+  function enterPage(m){ return function(){ m.enter(); }; }
+  function leavePage(m){ return function(){ if(m.leave) m.leave(); }; }
+  enterMap={ index:enterPage(index), schulte:enterPage(schulte), stroop:enterPage(stroop), find:enterPage(find), rest:enterPage(rest), stats:enterPage(stats) };
+  leaveMap={ schulte:leavePage(schulte), stroop:leavePage(stroop), find:leavePage(find), rest:leavePage(rest) };
 
   document.addEventListener('click', function(e){
     var el=e.target.closest('[data-action]'); if(!el) return;
