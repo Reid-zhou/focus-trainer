@@ -46,17 +46,31 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 .hero-title{font-size:26px; font-weight:900; color:#fff; line-height:1.25; text-shadow:0 2px 10px rgba(0,0,0,.3);}
 .hero-sub{font-size:14px; color:rgba(255,255,255,.95); margin-top:8px; text-shadow:0 1px 6px rgba(0,0,0,.25);}
 
-/* 游戏卡片 */
-.game-list{display:flex; flex-direction:column; gap:12px; margin-top:12px;}
-.game-card{display:flex; align-items:center; gap:14px; background:var(--card); border-radius:22px; padding:16px 18px; box-shadow:0 6px 18px rgba(74,144,226,.16); cursor:pointer; transition:transform .08s; border:1px solid rgba(74,144,226,.08);}
+/* 首页选项卡（等宽对齐） */
+.game-list{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:12px;}
+.game-card{display:flex; align-items:center; gap:12px; background:var(--card); border-radius:22px; padding:14px 16px; min-height:86px; box-shadow:0 6px 18px rgba(74,144,226,.16); cursor:pointer; transition:transform .08s; border:1px solid rgba(74,144,226,.08);}
 .game-card:active{transform:scale(.98);}
-.game-emoji{font-size:36px; width:50px; text-align:center;}
-.game-info{flex:1;}
-.game-name{font-size:18px; font-weight:700; color:var(--ink);}
-.game-desc{font-size:13px; color:var(--ink2); margin-top:3px;}
-.game-arrow{font-size:26px; color:var(--main);}
-.rest-card{background:linear-gradient(135deg,#E8F8EF,#D6F2E4); border:1px solid rgba(63,191,110,.12);}
-.rest-card .game-arrow{color:var(--green);}
+.game-emoji{font-size:32px; width:44px; text-align:center; flex:none;}
+.game-info{flex:1; min-width:0;}
+.game-name{font-size:17px; font-weight:700; color:var(--ink);}
+.game-desc{font-size:12px; color:var(--ink2); margin-top:3px; line-height:1.3;}
+.game-arrow{font-size:24px; color:var(--main); flex:none;}
+
+/* 双人对战入口区 */
+.battle-section{margin-top:8px;}
+.battle-title{font-size:15px; font-weight:800; color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.25); margin:16px 0 8px; display:flex; align-items:center; gap:6px;}
+.battle-list{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+.battle-card{display:flex; flex-direction:column; align-items:center; gap:4px; background:rgba(255,255,255,.92); border-radius:18px; padding:12px 6px; box-shadow:0 4px 12px rgba(74,144,226,.16); cursor:pointer; border:1px solid rgba(74,144,226,.1);}
+.battle-card:active{transform:scale(.97);}
+.battle-card .b-emoji{font-size:26px;}
+.battle-card .b-name{font-size:13px; font-weight:700; color:var(--ink); text-align:center;}
+.battle-card .b-desc{font-size:10px; color:var(--ink2); text-align:center; line-height:1.2;}
+
+/* 音乐控制 */
+.music-ctrl{position:absolute; top:10px; right:12px; z-index:60; display:flex; align-items:center; gap:6px; background:rgba(255,255,255,.85); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); padding:5px 8px; border-radius:16px; box-shadow:0 2px 8px rgba(74,144,226,.18);}
+.music-btn{border:none; background:transparent; font-size:19px; cursor:pointer; line-height:1; padding:0; width:26px; height:26px;}
+.music-vol{width:52px; accent-color:var(--main);}
+@media (max-width:360px){ .music-vol{width:38px;} .game-list{grid-template-columns:1fr;} }
 
 /* 成就入口 */
 .stats-entry{display:flex; align-items:center; justify-content:space-between; background:linear-gradient(135deg,var(--main-l),#D6EAFF); border-radius:22px; padding:16px 20px; margin-top:14px; cursor:pointer; border:1px solid rgba(74,144,226,.12); box-shadow:0 6px 18px rgba(74,144,226,.12);}
@@ -72,11 +86,6 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 /* 计时 */
 .timer{text-align:center; font-size:34px; font-weight:800; color:var(--ink); text-shadow:0 1px 2px rgba(46,64,87,.10); font-variant-numeric:tabular-nums; margin:8px 0;}
 .hint{text-align:center; font-size:13px; color:var(--ink2); margin-top:10px;}
-
-/* 尺寸选择 */
-.size-row{display:flex; gap:10px; justify-content:center; margin:10px 0;}
-.size-btn{border:2px solid #C5DDF7; background:#FFF; color:var(--ink); font-size:15px; font-weight:700; padding:9px 16px; border-radius:16px; cursor:pointer;}
-.size-btn.active{background:var(--main); border-color:var(--main); color:#fff;}
 
 /* 关卡选择（渐进难度） */
 .level-row{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:8px 0 12px;}
@@ -96,8 +105,8 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 .grid.shake{animation:shake .32s;}
 @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-6px);}80%{transform:translateX(6px);}}
 /* 不规则关卡：散落布局 */
-#schulte-grid.irregular{display:block; position:relative; height:440px; max-width:360px; margin:14px auto; gap:0;}
-#schulte-grid.irregular .cell{position:absolute; aspect-ratio:auto;}
+.grid.irregular{display:block; position:relative; height:440px; max-width:360px; margin:14px auto; gap:0;}
+.grid.irregular .cell{position:absolute; aspect-ratio:auto;}
 
 /* 结果 */
 .result{display:none; text-align:center; background:var(--card); border-radius:20px; padding:18px; margin-top:14px; box-shadow:0 6px 18px rgba(74,144,226,.16);}
@@ -154,6 +163,28 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 .item-unit{font-size:12px; color:var(--ink2);}
 .item-value{font-size:16px; font-weight:800; color:var(--main-d);}
 
+/* ===================== 双人同屏对战 ===================== */
+.battle-arena{display:flex; gap:10px; margin-top:8px; align-items:flex-start;}
+.battle-col{flex:1; min-width:0; background:rgba(255,255,255,.72); border-radius:18px; padding:8px 6px 10px; box-shadow:0 4px 14px rgba(74,144,226,.12);}
+.battle-col.win{box-shadow:0 0 0 3px var(--green), 0 4px 14px rgba(63,191,110,.3);}
+.battle-col.lose{opacity:.55;}
+.battle-head{display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:800; color:var(--main-d); padding:0 4px 6px;}
+.battle-head .ptimer{font-variant-numeric:tabular-nums; color:var(--ink); font-weight:700; font-size:15px;}
+.battle-col .grid{gap:6px; margin:8px auto; max-width:240px;}
+.battle-col .grid.irregular{height:300px; max-width:240px;}
+.battle-col .cell{font-size:26px !important; border-radius:12px; box-shadow:0 3px 8px rgba(74,144,226,.1);}
+.battle-col .timer{font-size:22px; margin:4px 0;}
+.battle-col .stroop-word{font-size:46px; margin:8px 0 4px;}
+.battle-col .stroop-options{gap:8px; margin-top:10px;}
+.battle-col .opt-btn{padding:14px 0; font-size:16px; border-radius:14px;}
+.battle-col .find-tip{font-size:13px; padding:6px 8px;}
+.battle-col .result{margin-top:8px; padding:12px;}
+.battle-col .result .big{font-size:18px;}
+.battle-col .result .sub{font-size:12px;}
+.battle-banner{text-align:center; font-size:20px; font-weight:900; color:var(--main-d); margin:14px 0 4px; min-height:28px;}
+.battle-banner.win{color:var(--green);}
+.battle-banner.tie{color:var(--ink2);}
+
 /* Toast */
 .toast{position:fixed; left:50%; bottom:80px; transform:translateX(-50%) translateY(20px); background:rgba(46,64,87,.92); color:#fff; padding:11px 20px; border-radius:20px; font-size:14px; opacity:0; pointer-events:none; transition:.25s; z-index:99; white-space:nowrap;}
 .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
@@ -163,6 +194,10 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 <div class="home-bg"></div>
 <div class="home-mask"></div>
 <div class="app">
+<div class="music-ctrl">
+  <button class="music-btn" id="music-btn" data-action="music-toggle" title="背景音乐">🔇</button>
+  <input class="music-vol" id="music-vol" type="range" min="0" max="100" value="50" data-action="music-vol" title="音量">
+</div>
 
   <!-- 首页 -->
   <section id="page-index" class="page active">
@@ -178,7 +213,11 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
       <div class="hero-sub">每天练一练，专注力越来越棒！</div>
     </div>
     <div class="game-list" id="index-games"></div>
-    <div class="game-card rest-card" data-action="go-rest">
+    <div class="battle-section">
+      <div class="battle-title">🤼 双人对战（一台设备，左右同屏）</div>
+      <div class="battle-list" id="index-battle"></div>
+    </div>
+    <div class="game-card rest-card" data-action="go-rest" style="margin-top:14px; background:linear-gradient(135deg,#E8F8EF,#D6F2E4); border:1px solid rgba(63,191,110,.12);">
       <div class="game-emoji">👀</div>
       <div class="game-info"><div class="game-name">护眼休息</div><div class="game-desc">看屏幕久了，远眺 20 秒</div></div>
       <div class="game-arrow">›</div>
@@ -195,35 +234,65 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   <section id="page-schulte" class="page">
     <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">舒尔特方格</div></div>
     <div class="level-row" id="schulte-levels"></div>
-    <div class="timer" id="schulte-timer">00:00</div>
-    <div class="grid" id="schulte-grid"></div>
-    <div class="result" id="schulte-result"></div>
+    <div class="timer">00:00</div>
+    <div class="grid"></div>
+    <div class="result"></div>
     <div class="row-btns"><button class="btn btn-secondary" data-action="schulte-restart">重新开始</button></div>
-    <div class="hint" id="schulte-hint">按 1、2、3… 的顺序点击，点错也不怕～</div>
+    <div class="hint">按 1、2、3… 的顺序点击，点错也不怕～</div>
   </section>
 
   <!-- 颜色挑战 -->
   <section id="page-stroop" class="page">
     <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">颜色挑战</div></div>
     <div class="level-row" id="stroop-levels"></div>
-    <div class="stroop-progress"><i id="stroop-bar"></i></div>
-    <div class="stroop-meta"><span id="stroop-current">1 / 10</span><span>最高 <span id="stroop-best">0</span> 题</span></div>
-    <div class="stroop-instr" id="stroop-instr">请点出【字】的颜色</div>
-    <div class="stroop-word" id="stroop-word">红</div>
-    <div class="stroop-feedback" id="stroop-feedback"></div>
-    <div class="stroop-options" id="stroop-options"></div>
-    <div class="result" id="stroop-result"></div>
-    <div class="row-btns"><button class="btn btn-secondary" data-action="stroop-restart" id="stroop-restart" style="display:none">再来一局</button></div>
+    <div class="stroop-progress"><i></i></div>
+    <div class="stroop-meta"><span class="meta-cur">1 / 10</span><span class="meta-best">最高 0 题</span></div>
+    <div class="stroop-instr">请点出【字】的颜色</div>
+    <div class="stroop-word">红</div>
+    <div class="stroop-feedback"></div>
+    <div class="stroop-options"></div>
+    <div class="result"></div>
+    <div class="row-btns"><button class="btn btn-secondary stroop-restart" data-action="stroop-restart" style="display:none">再来一局</button></div>
   </section>
 
   <!-- 找一找 -->
   <section id="page-find" class="page">
     <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">找一找</div></div>
-    <div class="find-tip" id="find-tip">找出所有的 🌟</div>
-    <div class="timer" id="find-timer">00:00</div>
-    <div class="grid" id="find-grid"></div>
-    <div class="result" id="find-result"></div>
+    <div class="find-tip">找出所有的 🌟</div>
+    <div class="timer">00:00</div>
+    <div class="grid"></div>
+    <div class="result"></div>
     <div class="row-btns"><button class="btn btn-secondary" data-action="find-restart">换一批</button></div>
+  </section>
+
+  <!-- 舒尔特·对战 -->
+  <section id="page-schulte-battle" class="page">
+    <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">舒尔特·对战</div></div>
+    <div class="level-row" id="sb-levels"></div>
+    <div class="battle-arena" id="sb-arena"></div>
+    <div class="battle-banner" id="sb-banner"></div>
+    <div class="row-btns"><button class="btn btn-secondary" data-action="battle-restart" data-module="schulte">重新开始</button></div>
+    <div class="hint">玩家1点左侧棋盘、玩家2点右侧棋盘，先按顺序点完者获胜！</div>
+  </section>
+
+  <!-- 颜色·对战 -->
+  <section id="page-stroop-battle" class="page">
+    <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">颜色·对战</div></div>
+    <div class="level-row" id="stb-levels"></div>
+    <div class="battle-arena" id="stb-arena"></div>
+    <div class="battle-banner" id="stb-banner"></div>
+    <div class="row-btns"><button class="btn btn-secondary" data-action="battle-restart" data-module="stroop">重新开始</button></div>
+    <div class="hint">玩家1答左侧、玩家2答右侧，答对更多者获胜（同分比速度）！</div>
+  </section>
+
+  <!-- 找一找·对战 -->
+  <section id="page-find-battle" class="page">
+    <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">找一找·对战</div></div>
+    <div class="level-row" id="fb-levels"></div>
+    <div class="battle-arena" id="fb-arena"></div>
+    <div class="battle-banner" id="fb-banner"></div>
+    <div class="row-btns"><button class="btn btn-secondary" data-action="battle-restart" data-module="find">重新开始</button></div>
+    <div class="hint">玩家1找左侧、玩家2找右侧，先找全目标者获胜！</div>
   </section>
 
   <!-- 护眼休息 -->
@@ -255,7 +324,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 (function(){
   "use strict";
 
-  /* ===================== 本地存储（localStorage 版，逻辑同小程序） ===================== */
+  /* ===================== 本地存储 ===================== */
   var ROOT_KEY = 'focus_trainer_data';
   var BEST_KEYS = ['schulte3','schulte4','schulte5','schulte6','schulteDyn','schulteIrr','find'];
   var SCORE_KEYS = ['stroop'];
@@ -329,9 +398,73 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     var t=$('toast'); t.textContent=msg; t.classList.add('show');
     clearTimeout(toastTimer); toastTimer=setTimeout(function(){ t.classList.remove('show'); },1500);
   }
+  function cellFont(size){ return size>=6?'38px':(size===5?'46px':(size===4?'54px':'70px')); }
+
+  /* ===================== 自适应背景音乐（Web Audio 程序化生成） ===================== */
+  var Music = (function(){
+    var ctx=null, master=null, filter=null;
+    var timer=null, lastNote=0, on=false, intensity=0.25, vol=0.5;
+    var SCALE=[0,3,5,7,10,12];      // 小调五声音阶
+    var ROOT=57;                    // A3
+    function midiToFreq(m){ return 440*Math.pow(2,(m-69)/12); }
+    function ensure(){
+      if(ctx) return true;
+      var AC=window.AudioContext||window.webkitAudioContext; if(!AC) return false;
+      try{
+        ctx=new AC();
+        master=ctx.createGain(); master.gain.value=vol;
+        filter=ctx.createBiquadFilter(); filter.type='lowpass'; filter.frequency.value=600; filter.Q.value=0.8;
+        filter.connect(master); master.connect(ctx.destination);
+        return true;
+      }catch(e){ ctx=null; return false; }
+    }
+    function blip(midi, dur, type, gain){
+      if(!ctx) return;
+      var o=ctx.createOscillator(), g=ctx.createGain();
+      o.type=type||'triangle'; o.frequency.value=midiToFreq(midi);
+      var t=ctx.currentTime;
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.linearRampToValueAtTime(gain||0.2, t+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+      o.connect(g); g.connect(filter); o.start(t); o.stop(t+dur+0.03);
+    }
+    function tick(){
+      if(!ctx||!on) return;
+      var now=Date.now();
+      var interval=0.50 - intensity*0.30;                 // 节奏：0.50s -> 0.20s
+      if(filter) filter.frequency.setTargetAtTime(500+intensity*2600, ctx.currentTime, 0.2); // 明亮度
+      if(now-lastNote >= interval*1000){
+        lastNote=now;
+        var step=Math.floor(now/(interval*1000))%8;
+        var deg=SCALE[step%SCALE.length] + (step>=SCALE.length?12:0);
+        blip(ROOT+12+deg, interval*0.9, 'triangle', 0.16+intensity*0.12);     // 主旋律
+        if(step%4===0) blip(ROOT-12, interval*1.4, 'sine', 0.22+intensity*0.10); // 低音
+        if(intensity>0.65 && step%2===0) blip(ROOT+24+SCALE[(step+2)%SCALE.length], interval*0.5,'square',0.04+intensity*0.05); // 高强度叠加
+      }
+    }
+    function startLoop(){ if(timer) clearInterval(timer); timer=setInterval(tick,110); }
+    return {
+      isOn:function(){ return on; },
+      toggle:function(){
+        if(!ensure()){ return false; }
+        if(ctx.state==='suspended'){ try{ ctx.resume(); }catch(e){} }
+        on=!on;
+        if(on){ lastNote=0; } else if(ctx){ try{ ctx.suspend(); }catch(e){} }
+        return on;
+      },
+      setVolume:function(v){ vol=Math.max(0,Math.min(1,v)); if(master) master.gain.value=vol; },
+      setProgress:function(p){ intensity=Math.max(0,Math.min(1, p==null?0.25:p)); }, // 0..1，随进度提升
+      flourish:function(){ // 胜利小高潮
+        if(!ctx||!on) return;
+        var base=ROOT+12;
+        [0,4,7,12].forEach(function(s,i){ setTimeout(function(){ blip(base+s,0.18,'triangle',0.22); }, i*90); });
+      },
+      start:function(){ if(ensure()){ startLoop(); } }
+    };
+  })();
 
   /* ===================== 路由 ===================== */
-  var PAGES=['index','schulte','stroop','find','rest','stats'];
+  var PAGES=['index','schulte','stroop','find','rest','stats','schulte-battle','stroop-battle','find-battle'];
   var enterMap={}, leaveMap={};
   var current='index';
   function go(page){
@@ -348,21 +481,29 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     { key:'stroop', name:'颜色挑战', emoji:'🎨', desc:'点“字的颜色”，别被字骗了' },
     { key:'find', name:'找一找', emoji:'🔍', desc:'找出所有的目标图案' }
   ];
-  var index={
-    enter:function(){
-      var box=$('index-games'); box.innerHTML='';
-      GAMES.forEach(function(g){
-        var c=document.createElement('div'); c.className='game-card'; c.dataset.action='go-'+g.key;
-        c.innerHTML='<div class="game-emoji">'+g.emoji+'</div><div class="game-info"><div class="game-name">'+g.name+'</div><div class="game-desc">'+g.desc+'</div></div><div class="game-arrow">›</div>';
-        box.appendChild(c);
-      });
-      var s=store.getStats();
-      $('index-playcount').textContent='已玩 '+s.playCount+' 次 ›';
-    }
-  };
+  var BATTLES=[
+    { key:'schulte-battle', name:'舒尔特', emoji:'🔢', desc:'顺序点数字' },
+    { key:'stroop-battle', name:'颜色', emoji:'🎨', desc:'点颜色 PK' },
+    { key:'find-battle', name:'找一找', emoji:'🔍', desc:'抢先找全' }
+  ];
+  function renderIndex(){
+    var box=$('index-games'); box.innerHTML='';
+    GAMES.forEach(function(g){
+      var c=document.createElement('div'); c.className='game-card'; c.dataset.action='go-'+g.key;
+      c.innerHTML='<div class="game-emoji">'+g.emoji+'</div><div class="game-info"><div class="game-name">'+g.name+'</div><div class="game-desc">'+g.desc+'</div></div><div class="game-arrow">›</div>';
+      box.appendChild(c);
+    });
+    var bb=$('index-battle'); bb.innerHTML='';
+    BATTLES.forEach(function(g){
+      var c=document.createElement('div'); c.className='battle-card'; c.dataset.action='go-'+g.key;
+      c.innerHTML='<div class="b-emoji">'+g.emoji+'</div><div class="b-name">'+g.name+'</div><div class="b-desc">'+g.desc+'</div>';
+      bb.appendChild(c);
+    });
+    var s=store.getStats();
+    $('index-playcount').textContent='已玩 '+s.playCount+' 次 ›';
+  }
 
-  /* ===================== 舒尔特方格 ===================== */
-  /* ===================== 舒尔特方格（渐进关卡） ===================== */
+  /* ===================== 关卡定义 ===================== */
   var SCHULTE_LEVELS=[
     {name:'入门', size:3, type:'grid', bestKey:'schulte3', desc:'3x3'},
     {name:'进阶', size:4, type:'grid', bestKey:'schulte4', desc:'4x4'},
@@ -371,122 +512,6 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     {name:'动态', size:5, type:'dynamic', bestKey:'schulteDyn', desc:'数字会动'},
     {name:'不规则', size:5, type:'irregular', bestKey:'schulteIrr', desc:'散落形'}
   ];
-  function cellFont(size){ return size>=6?'38px':(size===5?'46px':(size===4?'54px':'70px')); }
-  var schulte={
-    size:3, total:9, cells:[], next:1, playing:false, finished:false, wrongCount:0,
-    levelIndex:0, level:SCHULTE_LEVELS[0], layout:null,
-    _accum:0, _startAt:0, _timer:null, _shake:null, _dyn:null, inited:false,
-    enter:function(){
-      if(!this.inited){ this.inited=true; this.resetGame(0); }
-      else if(this.playing && !this.finished){ this.startTimer(); this.ensureDyn(); }
-    },
-    leave:function(){ this.pauseTimer(); this.clearShake(); this.clearDyn(); },
-    resetGame:function(li){
-      this.stopTimer(); this.clearShake(); this.clearDyn(); this._accum=0; this._startAt=0;
-      var lv=SCHULTE_LEVELS[li]; this.levelIndex=li; this.level=lv;
-      this.size=lv.size; this.total=lv.size*lv.size; this.next=1; this.playing=false; this.finished=false; this.wrongCount=0;
-      var nums=[]; for(var i=1;i<=this.total;i++) nums.push(i);
-      this.cells=shuffle(nums).map(function(n){ return {value:n,done:false}; });
-      if(lv.type==='irregular') this.buildLayout();
-      $('schulte-grid').classList.toggle('irregular', lv.type==='irregular');
-      this.renderAll(); this.renderTimer('00:00');
-      $('schulte-result').classList.remove('show');
-    },
-    buildLayout:function(){
-      var n=this.size, areaW=330, areaH=420, cw=Math.floor(Math.min(areaW/n, areaH/n))-4;
-      var pos=[];
-      for(var r=0;r<n;r++) for(var c=0;c<n;c++){
-        var x=c*(areaW/n)+(Math.random()*16-8)+3;
-        var y=r*(areaH/n)+(Math.random()*16-8)+3;
-        pos.push({x:x,y:y,cw:cw,rad:pick(['50%','18px','30% 50%','50% 30%','22px'])});
-      }
-      this.layout=pos;
-    },
-    renderLevels:function(){
-      var sr=$('schulte-levels'); sr.innerHTML='';
-      var self=this;
-      SCHULTE_LEVELS.forEach(function(lv,idx){
-        var b=document.createElement('button'); b.className='level-btn'+(idx===self.levelIndex?' active':'');
-        b.innerHTML=lv.name+'<small>'+lv.desc+'</small>';
-        b.dataset.action='level'; b.dataset.module='schulte'; b.dataset.index=idx; sr.appendChild(b);
-      });
-    },
-    renderGrid:function(moving){
-      var g=$('schulte-grid'); g.innerHTML='';
-      g.classList.toggle('irregular', this.level.type==='irregular');
-      if(this.level.type!=='irregular') g.style.setProperty('--n',this.size);
-      var fs=cellFont(this.size);
-      var self=this;
-      this.cells.forEach(function(c,i){
-        var d=document.createElement('div'); d.className='cell'+(c.done?' done':'')+(moving?' move':'');
-        d.textContent=String(c.value);
-        d.dataset.action='cell'; d.dataset.index=i;
-        if(self.level.type==='irregular'){
-          var p=self.layout[i];
-          d.style.position='absolute'; d.style.left=p.x+'px'; d.style.top=p.y+'px';
-          d.style.width=p.cw+'px'; d.style.height=p.cw+'px'; d.style.fontSize=(p.cw*0.5)+'px'; d.style.borderRadius=p.rad;
-        } else { d.style.fontSize=fs; }
-        g.appendChild(d);
-      });
-    },
-    renderAll:function(){ this.renderLevels(); this.renderGrid(); },
-    renderTimer:function(t){ $('schulte-timer').textContent=t; },
-    startTimer:function(){
-      var self=this; this.stopTimer(); this._startAt=Date.now();
-      this._timer=setInterval(function(){
-        var el=self._accum+(Date.now()-self._startAt);
-        self.renderTimer(store.formatTime(el));
-      },100);
-    },
-    ensureDyn:function(){
-      if(this.level.type!=='dynamic'||this._dyn) return;
-      var self=this;
-      this._dyn=setInterval(function(){ if(self.finished) return; self.shuffleDynamic(); },2600);
-    },
-    shuffleDynamic:function(){
-      var unfin=this.cells.filter(function(c){ return !c.done; });
-      if(unfin.length<2) return;
-      var sh=shuffle(unfin); var k=0;
-      this.cells=this.cells.map(function(c){ return c.done?c:sh[k++]; });
-      this.renderGrid(true);
-    },
-    pauseTimer:function(){ if(this._timer){ this._accum+=Date.now()-this._startAt; this.stopTimer(); } },
-    stopTimer:function(){ if(this._timer){ clearInterval(this._timer); this._timer=null; } },
-    clearDyn:function(){ if(this._dyn){ clearInterval(this._dyn); this._dyn=null; } },
-    clearShake:function(){ if(this._shake){ clearTimeout(this._shake); this._shake=null; } $('schulte-grid').classList.remove('shake'); },
-    onTapCell:function(i){
-      if(this.finished) return;
-      var c=this.cells[i]; if(!c||c.done) return;
-      if(!this.playing){ this.playing=true; this.startTimer(); this.ensureDyn(); }
-      if(c.value===this.next){
-        c.done=true; this.next++;
-        var d=$('schulte-grid').children[i]; d.classList.add('done'); d.textContent=String(c.value);
-        if(this.next>this.total){ this.finish(); }
-      } else { this.onWrong(); }
-    },
-    onWrong:function(){
-      this.wrongCount++; vibrate();
-      var g=$('schulte-grid'); g.classList.add('shake');
-      var self=this; this.clearShake(); this._shake=setTimeout(function(){ g.classList.remove('shake'); },340);
-    },
-    finish:function(){
-      this.pauseTimer(); this.clearDyn(); var used=this._accum;
-      var key=this.level.bestKey;
-      var isNew=store.setBest(key,used); store.incrPlayCount();
-      this.finished=true; this.playing=false;
-      this.renderTimer(store.formatTime(used));
-      var r=$('schulte-result');
-      r.innerHTML='<div class="big">'+store.formatSeconds(used)+'</div>'+
-        '<div class="sub">点错 '+this.wrongCount+' 次 · 历史最佳 '+store.formatSeconds(store.getBest(key))+'</div>'+
-        '<div class="record">'+(isNew?'新纪录！⭐⭐⭐':'太棒了！⭐')+'</div>';
-      r.classList.add('show');
-      toast(isNew?'新纪录！⭐':'太棒了！⭐');
-    }
-  };
-
-
-  /* ===================== 颜色挑战（Stroop） ===================== */
-  /* ===================== 颜色挑战（Stroop，渐进关卡） ===================== */
   var COLORS=[
     {key:'red',label:'红',hex:'#FF5A5A'},
     {key:'blue',label:'蓝',hex:'#4A90E2'},
@@ -508,182 +533,364 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     var others=palette.filter(function(c){ return c.key!==word.key; });
     var shown=pick(others);
     var mode = baseMode==='mix' ? (Math.random()<0.5?'color':'word') : baseMode;
-    return {
-      wordLabel:word.label, wordKey:word.key, colorKey:shown.key, colorHex:shown.hex,
-      mode:mode, correctKey:(mode==='word'?word.key:shown.key)
-    };
+    return { wordLabel:word.label, wordKey:word.key, colorKey:shown.key, colorHex:shown.hex, mode:mode, correctKey:(mode==='word'?word.key:shown.key) };
   }
-  function instrText(mode){
-    return mode==='word' ? '请点出【字】的意思' : '请点出【字】的颜色';
+  function instrText(mode){ return mode==='word' ? '请点出【字】的意思' : '请点出【字】的颜色'; }
+
+  /* ===================== 舒尔特方格（可实例化） ===================== */
+  function SchulteGame(root, cfg){
+    this.root=root; this.cfg=cfg||{};
+    this.q=function(s){ return root.querySelector(s); };
+    this.levelIndex=0; this.level=SCHULTE_LEVELS[0];
+    this.size=3; this.total=9; this.cells=[]; this.next=1; this.playing=false; this.finished=false; this.wrongCount=0;
+    this._accum=0; this._startAt=0; this._timer=null; this._shake=null; this._dyn=null; this.inBattle=root.classList.contains('battle-col');
   }
-  var stroop={
-    current:1, score:0, question:null, options:[], finished:false, locked:false, feedback:'', fbType:'',
-    levelIndex:0, level:STROOP_LEVELS[0], total:10, palette:COLORS.slice(0,4),
-    _timer:null, _qtimer:null, inited:false,
-    enter:function(){
-      this.inited=true; this.renderLevels(); this.startGame();
-    },
-    leave:function(){ this.clearTimer(); this.clearQuestionTimer(); },
-    clearTimer:function(){ if(this._timer){ clearTimeout(this._timer); this._timer=null; } },
-    clearQuestionTimer:function(){ if(this._qtimer){ clearTimeout(this._qtimer); this._qtimer=null; } },
-    resetGame:function(li){
-      this.levelIndex=li; this.level=STROOP_LEVELS[li]; this.renderLevels(); this.startGame();
-    },
-    startGame:function(){
-      this.clearTimer(); this.clearQuestionTimer();
-      this.current=1; this.score=0; this.finished=false; this.locked=false;
-      this.feedback=''; this.fbType='';
-      this.total=this.level.total;
-      this.palette=COLORS.slice(0,this.level.colors);
-      this.question=makeQuestion(this.palette,this.level.mode);
-      this.options=shuffle(this.palette);
-      this.render();
-    },
-    render:function(){
-      if(this.question){
-        var w=$('stroop-word'); w.textContent=this.question.wordLabel; w.style.color=this.question.colorHex;
-        $('stroop-instr').textContent=instrText(this.question.mode);
-      }
-      $('stroop-current').textContent=this.current+' / '+this.total;
-      $('stroop-best').textContent=store.getScore('stroop');
-      $('stroop-bar').style.width=((this.current-1)/this.total*100)+'%';
-      var fb=$('stroop-feedback'); fb.textContent=this.feedback; fb.className='stroop-feedback '+(this.fbType||'');
-      var box=$('stroop-options'); box.innerHTML='';
-      if(!this.finished){
-        this.options.forEach(function(o){
-          var b=document.createElement('button'); b.className='opt-btn'; b.style.background=o.hex;
-          b.textContent=o.label; b.dataset.action='option'; b.dataset.key=o.key; box.appendChild(b);
-        });
-      }
-      if(this.finished){
-        var r=$('stroop-result');
-        var acc=Math.round(this.score/this.total*100);
-        var praise = acc>=90?'专注力超强，火眼金睛！🔥' : acc>=70?'不错哦，再练更厉害！💪' : '别灰心，多玩几次就熟啦～🌟';
-        r.innerHTML='<div class="big">'+this.score+' / '+this.total+'</div>'+
-          '<div class="sub">正确率 '+acc+'% · 历史最高 '+store.getScore('stroop')+' 题</div>'+
-          '<div class="record">'+(this.isNew?'新纪录！⭐':praise)+'</div>';
-        r.classList.add('show');
-        $('stroop-restart').style.display='';
-      } else {
-        $('stroop-result').classList.remove('show');
-        $('stroop-restart').style.display='none';
-      }
-    },
-    onTap:function(key){
-      if(this.finished||this.locked) return;
-      this.clearQuestionTimer();
-      this.advance(key===this.question.correctKey);
-    },
-    onTimeout:function(){
-      if(this.finished||this.locked) return;
-      this.advance(false);
-    },
-    advance:function(right){
-      if(!right) vibrate();
-      if(right) this.score++;
-      this.feedback=right?'答对啦 ✅':'答错咯 ❌ '+(this.question.mode==='word'?'要看“字的意思”':'要看“字的颜色”');
-      this.fbType=right?'right':'wrong'; this.locked=true; this.render();
-      var self=this; this._timer=setTimeout(function(){ self.next(); },420);
-    },
-    next:function(){
-      this.clearTimer();
-      if(this.current>=this.total){ this.finish(); return; }
-      this.current++; this.question=makeQuestion(this.palette,this.level.mode); this.options=shuffle(this.palette);
-      this.feedback=''; this.fbType=''; this.locked=false; this.render();
-      if(this.level.time>0){
-        var self=this;
-        this._qtimer=setTimeout(function(){ self.onTimeout(); }, this.level.time);
-      }
-    },
-    finish:function(){
-      var s=this.score; this.isNew=store.setScore('stroop',s); store.incrPlayCount();
-      this.finished=true; this.feedback=''; this.fbType=''; this.clearQuestionTimer(); this.render();
-      toast(this.isNew?'新纪录！⭐':'完成啦！⭐');
-    },
-    renderLevels:function(){
-      var sr=$('stroop-levels'); sr.innerHTML='';
+  SchulteGame.prototype.reset=function(li){
+    this.stopTimer(); this.clearDyn(); this.clearShake(); this._accum=0; this._startAt=0;
+    var lv=SCHULTE_LEVELS[li]; this.levelIndex=li; this.level=lv;
+    this.size=lv.size; this.total=lv.size*lv.size; this.next=1; this.playing=false; this.finished=false; this.wrongCount=0;
+    var nums=[]; for(var i=1;i<=this.total;i++) nums.push(i);
+    this.cells=shuffle(nums).map(function(n){ return {value:n,done:false}; });
+    this.renderLevels(); this.renderGrid(); this.renderTimer('00:00');
+    this.q('.result').classList.remove('show');
+    if(this.cfg.onProgress) this.cfg.onProgress(0);
+  };
+  SchulteGame.prototype.renderLevels=function(){
+    var sr=this.q('.level-row'); if(!sr) return;
+    var self=this; sr.innerHTML='';
+    SCHULTE_LEVELS.forEach(function(lv,idx){
+      var b=document.createElement('button'); b.className='level-btn'+(idx===self.levelIndex?' active':'');
+      b.innerHTML=lv.name+'<small>'+lv.desc+'</small>';
+      b.dataset.action='level'; b.dataset.index=idx; sr.appendChild(b);
+    });
+  };
+  SchulteGame.prototype.renderGrid=function(moving){
+    var g=this.q('.grid'); if(!g) return; g.innerHTML='';
+    g.classList.toggle('irregular', this.level.type==='irregular');
+    if(this.level.type!=='irregular') g.style.setProperty('--n',this.size);
+    var fs=cellFont(this.size);
+    var self=this;
+    var availW=g.clientWidth||300;
+    var areaH=(this.level.type==='irregular')?(g.clientHeight||(self.inBattle?300:440)):0;
+    this.cells.forEach(function(c,i){
+      var d=document.createElement('div'); d.className='cell'+(c.done?' done':'')+(moving?' move':'');
+      d.textContent=String(c.value); d.dataset.action='cell'; d.dataset.index=i;
+      if(self.level.type==='irregular'){
+        var cw=Math.floor(Math.min(availW/self.size,(areaH||440)/self.size))-4;
+        var x=(i%self.size)*(availW/self.size)+(Math.random()*14-7)+2;
+        var y=Math.floor(i/self.size)*(areaH/self.size)+(Math.random()*14-7)+2;
+        d.style.position='absolute'; d.style.left=Math.max(0,x)+'px'; d.style.top=Math.max(0,y)+'px';
+        d.style.width=cw+'px'; d.style.height=cw+'px'; d.style.fontSize=(cw*0.5)+'px'; d.style.borderRadius=pick(['50%','18px','30% 50%','50% 30%','22px']);
+      } else if(!self.inBattle){ d.style.fontSize=fs; }
+      g.appendChild(d);
+    });
+  };
+  SchulteGame.prototype.renderTimer=function(t){ var el=this.q('.timer'); if(el) el.textContent=t; };
+  SchulteGame.prototype.startTimer=function(){
+    var self=this; this.stopTimer(); this._startAt=Date.now();
+    this._timer=setInterval(function(){ self.renderTimer(store.formatTime(self._accum+(Date.now()-self._startAt))); },100);
+  };
+  SchulteGame.prototype.ensureDyn=function(){
+    if(this.level.type!=='dynamic'||this._dyn) return;
+    var self=this;
+    this._dyn=setInterval(function(){ if(self.finished) return; self.shuffleDynamic(); },2600);
+  };
+  SchulteGame.prototype.shuffleDynamic=function(){
+    var unfin=this.cells.filter(function(c){ return !c.done; });
+    if(unfin.length<2) return;
+    var sh=shuffle(unfin); var k=0;
+    this.cells=this.cells.map(function(c){ return c.done?c:sh[k++]; });
+    this.renderGrid(true);
+  };
+  SchulteGame.prototype.pauseTimer=function(){ if(this._timer){ this._accum+=Date.now()-this._startAt; this.stopTimer(); } };
+  SchulteGame.prototype.stopTimer=function(){ if(this._timer){ clearInterval(this._timer); this._timer=null; } };
+  SchulteGame.prototype.clearDyn=function(){ if(this._dyn){ clearInterval(this._dyn); this._dyn=null; } };
+  SchulteGame.prototype.clearShake=function(){ if(this._shake){ clearTimeout(this._shake); this._shake=null; } var g=this.q('.grid'); if(g) g.classList.remove('shake'); };
+  SchulteGame.prototype.onTapCell=function(i){
+    if(this.finished) return;
+    var c=this.cells[i]; if(!c||c.done) return;
+    if(!this.playing){ this.playing=true; this.startTimer(); this.ensureDyn(); }
+    if(c.value===this.next){
+      c.done=true; this.next++;
+      var d=this.q('.grid').children[i]; if(d){ d.classList.add('done'); d.textContent=String(c.value); }
+      if(this.cfg.onProgress) this.cfg.onProgress((this.next-1)/this.total);
+      if(this.next>this.total){ this.finish(); }
+    } else { this.onWrong(); }
+  };
+  SchulteGame.prototype.onWrong=function(){
+    this.wrongCount++; vibrate();
+    var g=this.q('.grid'); if(g) g.classList.add('shake');
+    var self=this; this.clearShake(); this._shake=setTimeout(function(){ if(g) g.classList.remove('shake'); },340);
+  };
+  SchulteGame.prototype.finish=function(){
+    this.pauseTimer(); this.clearDyn();
+    var used=this._accum; var key=this.level.bestKey;
+    this.finished=true; this.playing=false; this.renderTimer(store.formatTime(used));
+    if(this.cfg.onFinish) this.cfg.onFinish({type:'schulte',used:used,wrong:this.wrongCount,level:this.level,bestKey:key}, this);
+  };
+  SchulteGame.prototype.leave=function(){ this.pauseTimer(); this.clearShake(); this.clearDyn(); };
+
+  /* ===================== 颜色挑战（可实例化） ===================== */
+  function StroopGame(root, cfg){
+    this.root=root; this.cfg=cfg||{};
+    this.q=function(s){ return root.querySelector(s); };
+    this.levelIndex=0; this.level=STROOP_LEVELS[0]; this.current=1; this.score=0; this.finished=false; this.locked=false;
+    this.feedback=''; this.fbType=''; this.question=null; this.options=[]; this.total=10; this.palette=COLORS.slice(0,4);
+    this._timer=null; this._qtimer=null; this.inBattle=root.classList.contains('battle-col');
+  }
+  StroopGame.prototype.reset=function(li){
+    this.levelIndex=li; this.level=STROOP_LEVELS[li]; this.startGame();
+    if(this.cfg.onProgress) this.cfg.onProgress(0);
+  };
+  StroopGame.prototype.startGame=function(){
+    this.clearTimer(); this.clearQuestionTimer();
+    this.current=1; this.score=0; this.finished=false; this.locked=false; this.feedback=''; this.fbType='';
+    this.total=this.level.total; this.palette=COLORS.slice(0,this.level.colors);
+    this.question=makeQuestion(this.palette,this.level.mode); this.options=shuffle(this.palette);
+    this.render();
+  };
+  StroopGame.prototype.render=function(){
+    if(this.question){
+      var w=this.q('.stroop-word'); if(w){ w.textContent=this.question.wordLabel; w.style.color=this.question.colorHex; }
+      var ins=this.q('.stroop-instr'); if(ins) ins.textContent=instrText(this.question.mode);
+    }
+    var cur=this.q('.meta-cur'); if(cur) cur.textContent=this.current+' / '+this.total;
+    var best=this.q('.meta-best'); if(best) best.textContent='最高 '+store.getScore('stroop')+' 题';
+    var bar=this.q('.stroop-progress'); if(bar&&bar.firstElementChild) bar.firstElementChild.style.width=((this.current-1)/this.total*100)+'%';
+    var fb=this.q('.stroop-feedback'); if(fb){ fb.textContent=this.feedback; fb.className='stroop-feedback '+(this.fbType||''); }
+    var box=this.q('.stroop-options'); if(box) box.innerHTML='';
+    if(!this.finished && box){
       var self=this;
-      STROOP_LEVELS.forEach(function(lv,idx){
-        var b=document.createElement('button'); b.className='level-btn'+(idx===self.levelIndex?' active':'');
-        b.innerHTML=lv.name+'<small>'+lv.desc+'</small>';
-        b.dataset.action='level'; b.dataset.module='stroop'; b.dataset.index=idx; sr.appendChild(b);
+      this.options.forEach(function(o){
+        var b=document.createElement('button'); b.className='opt-btn'; b.style.background=o.hex;
+        b.textContent=o.label; b.dataset.action='option'; b.dataset.key=o.key; box.appendChild(b);
       });
     }
+    if(this.finished){
+      if(this.cfg.onFinish) this.cfg.onFinish({type:'stroop',score:this.score,total:this.total}, this);
+    } else {
+      var rs=this.q('.result'); if(rs) rs.classList.remove('show');
+      var rbtn=this.q('.stroop-restart'); if(rbtn) rbtn.style.display='none';
+    }
   };
+  StroopGame.prototype.onTap=function(key){
+    if(this.finished||this.locked) return;
+    this.clearQuestionTimer(); this.advance(key===this.question.correctKey);
+  };
+  StroopGame.prototype.onTimeout=function(){ if(this.finished||this.locked) return; this.advance(false); };
+  StroopGame.prototype.advance=function(right){
+    if(!right) vibrate();
+    if(right) this.score++;
+    if(this.cfg.onProgress) this.cfg.onProgress(this.current/this.total);
+    this.feedback=right?'答对啦 ✅':'答错咯 ❌ '+(this.question.mode==='word'?'要看“字的意思”':'要看“字的颜色”');
+    this.fbType=right?'right':'wrong'; this.locked=true; this.render();
+    var self=this; this._timer=setTimeout(function(){ self.next(); },420);
+  };
+  StroopGame.prototype.next=function(){
+    this.clearTimer();
+    if(this.current>=this.total){ this.finish(); return; }
+    this.current++; this.question=makeQuestion(this.palette,this.level.mode); this.options=shuffle(this.palette);
+    this.feedback=''; this.fbType=''; this.locked=false; this.render();
+    if(this.level.time>0){
+      var self=this; this._qtimer=setTimeout(function(){ self.onTimeout(); }, this.level.time);
+    }
+  };
+  StroopGame.prototype.finish=function(){
+    this.finished=true; this.feedback=''; this.fbType=''; this.clearQuestionTimer(); this.render();
+    if(this.cfg.onFinish) this.cfg.onFinish({type:'stroop',score:this.score,total:this.total}, this);
+  };
+  StroopGame.prototype.clearTimer=function(){ if(this._timer){ clearTimeout(this._timer); this._timer=null; } };
+  StroopGame.prototype.clearQuestionTimer=function(){ if(this._qtimer){ clearTimeout(this._qtimer); this._qtimer=null; } };
+  StroopGame.prototype.leave=function(){ this.clearTimer(); this.clearQuestionTimer(); };
 
-
-  /* ===================== 找一找 ===================== */
+  /* ===================== 找一找（可实例化） ===================== */
   var EMOJI_POOL=['🌟','🍎','🐱','🌸','🐟','🎈','🍀','🐝','🍄','⚽️'];
-  var GRID=4, TARGET_COUNT=4;
-  var find={
-    size:GRID, target:'🌟', cells:[], foundCount:0, playing:false, finished:false, wrongCount:0,
-    _accum:0, _startAt:0, _timer:null, _shake:null, inited:false,
-    enter:function(){
-      if(!this.inited){ this.inited=true; this.resetGame(); }
-      else if(this.playing && !this.finished){ this.startTimer(); }
-    },
-    leave:function(){ this.pauseTimer(); this.clearShake(); },
-    resetGame:function(){
-      this.stopTimer(); this.clearShake(); this._accum=0; this._startAt=0;
-      this.foundCount=0; this.playing=false; this.finished=false; this.wrongCount=0;
-      var pool=shuffle(EMOJI_POOL); this.target=pool[0]; var distractors=pool.slice(1);
-      var total=GRID*GRID; var cells=[];
-      for(var i=0;i<TARGET_COUNT;i++) cells.push({emoji:this.target,isTarget:true,found:false});
-      for(var j=0;j<total-TARGET_COUNT;j++) cells.push({emoji:distractors[j%distractors.length],isTarget:false,found:false});
-      this.cells=shuffle(cells);
-      this.renderAll(); this.renderTimer('00:00');
-      $('find-result').classList.remove('show');
-      $('find-tip').textContent='找出所有的 '+this.target;
-    },
-    renderGrid:function(){
-      var g=$('find-grid'); g.innerHTML=''; g.style.setProperty('--n',this.size);
-      var self=this;
-      this.cells.forEach(function(c,i){
-        var d=document.createElement('div'); d.className='cell'+(c.found?' found':'');
-        d.style.fontSize='40px'; d.textContent=c.found?'✅':c.emoji;
-        d.dataset.action='cell'; d.dataset.index=i; g.appendChild(d);
+  function FindGame(root, cfg){
+    this.root=root; this.cfg=cfg||{};
+    this.q=function(s){ return root.querySelector(s); };
+    this.size=4; this.target='🌟'; this.cells=[]; this.foundCount=0; this.playing=false; this.finished=false; this.wrongCount=0;
+    this._accum=0; this._startAt=0; this._timer=null; this._shake=null; this.inBattle=root.classList.contains('battle-col');
+  }
+  FindGame.prototype.reset=function(){
+    this.stopTimer(); this.clearShake(); this._accum=0; this._startAt=0;
+    this.foundCount=0; this.playing=false; this.finished=false; this.wrongCount=0;
+    var pool=shuffle(EMOJI_POOL); this.target=pool[0]; var distractors=pool.slice(1);
+    var total=this.size*this.size; var cells=[];
+    for(var i=0;i<4;i++) cells.push({emoji:this.target,isTarget:true,found:false});
+    for(var j=0;j<total-4;j++) cells.push({emoji:distractors[j%distractors.length],isTarget:false,found:false});
+    this.cells=shuffle(cells);
+    this.renderGrid(); this.renderTimer('00:00');
+    var tip=this.q('.find-tip'); if(tip) tip.textContent='找出所有的 '+this.target;
+    var rs=this.q('.result'); if(rs) rs.classList.remove('show');
+    if(this.cfg.onProgress) this.cfg.onProgress(0);
+  };
+  FindGame.prototype.renderGrid=function(){
+    var g=this.q('.grid'); if(!g) return; g.innerHTML=''; g.style.setProperty('--n',this.size);
+    var self=this;
+    this.cells.forEach(function(c,i){
+      var d=document.createElement('div'); d.className='cell'+(c.found?' found':'');
+      d.style.fontSize=self.inBattle?'30px':'40px'; d.textContent=c.found?'✅':c.emoji;
+      d.dataset.action='cell'; d.dataset.index=i; g.appendChild(d);
+    });
+  };
+  FindGame.prototype.renderTimer=function(t){ var el=this.q('.timer'); if(el) el.textContent=t; };
+  FindGame.prototype.startTimer=function(){
+    var self=this; this.stopTimer(); this._startAt=Date.now();
+    this._timer=setInterval(function(){ self.renderTimer(store.formatTime(self._accum+(Date.now()-self._startAt))); },100);
+  };
+  FindGame.prototype.pauseTimer=function(){ if(this._timer){ this._accum+=Date.now()-this._startAt; this.stopTimer(); } };
+  FindGame.prototype.stopTimer=function(){ if(this._timer){ clearInterval(this._timer); this._timer=null; } };
+  FindGame.prototype.clearShake=function(){ if(this._shake){ clearTimeout(this._shake); this._shake=null; } var g=this.q('.grid'); if(g) g.classList.remove('shake'); };
+  FindGame.prototype.onTapCell=function(i){
+    if(this.finished) return;
+    var c=this.cells[i]; if(!c||c.found) return;
+    if(!this.playing){ this.playing=true; this.startTimer(); }
+    if(c.isTarget){
+      c.found=true; this.foundCount++;
+      var d=this.q('.grid').children[i]; if(d){ d.classList.add('found'); d.textContent='✅'; }
+      if(this.cfg.onProgress) this.cfg.onProgress(this.foundCount/4);
+      if(this.foundCount>=4){ this.finish(); }
+    } else { this.onWrong(); }
+  };
+  FindGame.prototype.onWrong=function(){
+    this.wrongCount++; vibrate();
+    var g=this.q('.grid'); if(g) g.classList.add('shake');
+    var self=this; this.clearShake(); this._shake=setTimeout(function(){ if(g) g.classList.remove('shake'); },340);
+  };
+  FindGame.prototype.finish=function(){
+    this.pauseTimer();
+    var used=this._accum;
+    this.finished=true; this.playing=false; this.renderTimer(store.formatTime(used));
+    if(this.cfg.onFinish) this.cfg.onFinish({type:'find',used:used,wrong:this.wrongCount}, this);
+  };
+  FindGame.prototype.leave=function(){ this.pauseTimer(); this.clearShake(); };
+
+  /* ===================== 单人模式实例 ===================== */
+  var spSchulteFinish=function(res){
+    var isNew=store.setBest(res.bestKey,res.used); store.incrPlayCount();
+    var r=schulteSP.q('.result');
+    r.innerHTML='<div class="big">'+store.formatSeconds(res.used)+'</div>'+
+      '<div class="sub">点错 '+res.wrong+' 次 · 历史最佳 '+store.formatSeconds(store.getBest(res.bestKey))+'</div>'+
+      '<div class="record">'+(isNew?'新纪录！⭐⭐⭐':'太棒了！⭐')+'</div>';
+    r.classList.add('show'); toast(isNew?'新纪录！⭐':'太棒了！⭐');
+  };
+  var spStroopFinish=function(res){
+    var isNew=store.setScore('stroop',res.score); store.incrPlayCount();
+    var r=stroopSP.q('.result');
+    var acc=Math.round(res.score/res.total*100);
+    var praise = acc>=90?'专注力超强，火眼金睛！🔥' : acc>=70?'不错哦，再练更厉害！💪' : '别灰心，多玩几次就熟啦～🌟';
+    r.innerHTML='<div class="big">'+res.score+' / '+res.total+'</div>'+
+      '<div class="sub">正确率 '+acc+'% · 历史最高 '+store.getScore('stroop')+' 题</div>'+
+      '<div class="record">'+(isNew?'新纪录！⭐':praise)+'</div>';
+    r.classList.add('show');
+    var rb=stroopSP.q('.stroop-restart'); if(rb) rb.style.display='';
+    toast(isNew?'新纪录！⭐':'完成啦！⭐');
+  };
+  var spFindFinish=function(res){
+    var isNew=store.setBest('find',res.used); store.incrPlayCount();
+    var r=findSP.q('.result');
+    var star=1; if(res.used<=12000 && res.wrong<=1) star=3; else if(res.used<=20000 && res.wrong<=3) star=2;
+    var stars=''; for(var k=0;k<star;k++) stars+='⭐';
+    r.innerHTML='<div class="big">'+store.formatSeconds(res.used)+'</div>'+
+      '<div class="sub">点错 '+res.wrong+' 次 · 历史最佳 '+store.formatSeconds(store.getBest('find'))+'</div>'+
+      '<div class="record">'+stars+(isNew?' · 新纪录！':'')+'</div>';
+    r.classList.add('show'); toast(isNew?'新纪录！⭐':'全找到啦！⭐');
+  };
+  var schulteSP=new SchulteGame($('page-schulte'), { onProgress:function(p){ Music.setProgress(0.3+p*0.5); }, onFinish:spSchulteFinish });
+  var stroopSP=new StroopGame($('page-stroop'), { onProgress:function(p){ Music.setProgress(0.3+p*0.5); }, onFinish:spStroopFinish });
+  var findSP=new FindGame($('page-find'), { onProgress:function(p){ Music.setProgress(0.3+p*0.5); }, onFinish:spFindFinish });
+
+  /* ===================== 双人对战协调器 ===================== */
+  function battleColHTML(player, type){
+    var head='<div class="battle-head"><span class="pname">玩家'+(player==='p1'?'1（左）':'2（右）')+'</span><span class="ptimer">--</span></div>';
+    var body='';
+    if(type==='schulte') body='<div class="timer">00:00</div><div class="grid"></div>';
+    else if(type==='stroop') body='<div class="stroop-progress"><i></i></div><div class="stroop-meta"><span class="meta-cur">1 / 10</span><span class="meta-best">最高 0 题</span></div><div class="stroop-instr">请点出【字】的颜色</div><div class="stroop-word">红</div><div class="stroop-feedback"></div><div class="stroop-options"></div>';
+    else body='<div class="find-tip">找出所有的 🌟</div><div class="timer">00:00</div><div class="grid"></div>';
+    return '<div class="battle-col" data-player="'+player+'">'+head+body+'<div class="result"></div></div>';
+  }
+  function Battle(type, arenaId, levelRowId){
+    this.type=type; this.arena=$(arenaId); this.levelRowId=levelRowId;
+    this.banner=$(arenaId.replace('arena','banner'));
+    this.levelIndex=0; this.order=[]; this.decided=false;
+    var self=this;
+    this.arena.innerHTML=battleColHTML('p1',type)+battleColHTML('p2',type)+'';
+    function makeGame(col, player){
+      return new (type==='schulte'?SchulteGame:type==='stroop'?StroopGame:FindGame)(col, {
+        player:player,
+        onProgress:function(p){ Music.setProgress(0.3+p*0.5); },
+        onFinish:function(res,game){ self.renderCol(player,res); self.noteFinish(player,res); }
       });
-    },
-    renderAll:function(){ this.renderGrid(); },
-    renderTimer:function(t){ $('find-timer').textContent=t; },
-    startTimer:function(){
-      var self=this; this.stopTimer(); this._startAt=Date.now();
-      this._timer=setInterval(function(){ self.renderTimer(store.formatTime(self._accum+(Date.now()-self._startAt))); },100);
-    },
-    pauseTimer:function(){ if(this._timer){ this._accum+=Date.now()-this._startAt; this.stopTimer(); } },
-    stopTimer:function(){ if(this._timer){ clearInterval(this._timer); this._timer=null; } },
-    clearShake:function(){ if(this._shake){ clearTimeout(this._shake); this._shake=null; } $('find-grid').classList.remove('shake'); },
-    onTapCell:function(i){
-      if(this.finished) return;
-      var c=this.cells[i]; if(!c||c.found) return;
-      if(!this.playing){ this.playing=true; this.startTimer(); }
-      if(c.isTarget){
-        c.found=true; this.foundCount++;
-        var d=$('find-grid').children[i]; d.classList.add('found'); d.textContent='✅';
-        if(this.foundCount>=TARGET_COUNT){ this.finish(); }
-      } else { this.onWrong(); }
-    },
-    onWrong:function(){
-      this.wrongCount++; vibrate();
-      var g=$('find-grid'); g.classList.add('shake');
-      var self=this; this.clearShake(); this._shake=setTimeout(function(){ g.classList.remove('shake'); },340);
-    },
-    finish:function(){
-      this.pauseTimer(); var used=this._accum;
-      var isNew=store.setBest('find',used); store.incrPlayCount();
-      this.finished=true; this.playing=false; this.renderTimer(store.formatTime(used));
-      var star=1;
-      if(used<=12000 && this.wrongCount<=1) star=3;
-      else if(used<=20000 && this.wrongCount<=3) star=2;
-      var stars=''; for(var k=0;k<star;k++) stars+='⭐';
-      var r=$('find-result');
-      r.innerHTML='<div class="big">'+store.formatSeconds(used)+'</div>'+
-        '<div class="sub">点错 '+this.wrongCount+' 次 · 历史最佳 '+store.formatSeconds(store.getBest('find'))+'</div>'+
-        '<div class="record">'+stars+(isNew?' · 新纪录！':'')+'</div>';
-      r.classList.add('show');
-      toast(isNew?'新纪录！⭐':'全找到啦！⭐');
+    }
+    this.p1=makeGame(this.arena.querySelector('[data-player="p1"]'),'p1');
+    this.p2=makeGame(this.arena.querySelector('[data-player="p2"]'),'p2');
+  }
+  Battle.prototype.renderLevels=function(){
+    var sr=$(this.levelRowId); if(!sr) return; var self=this; sr.innerHTML='';
+    var lv=this.type==='schulte'?SCHULTE_LEVELS:STROOP_LEVELS;
+    lv.forEach(function(l,i){
+      var b=document.createElement('button'); b.className='level-btn'+(i===self.levelIndex?' active':'');
+      b.innerHTML=l.name+'<small>'+l.desc+'</small>';
+      b.dataset.action='level'; b.dataset.index=i; sr.appendChild(b);
+    });
+  };
+  Battle.prototype.reset=function(li){
+    this.levelIndex=(li==null?this.levelIndex:li); this.order=[]; this.decided=false;
+    this.banner.textContent=''; this.banner.className='battle-banner';
+    this.arena.querySelectorAll('.battle-col').forEach(function(c){ c.classList.remove('win','lose'); });
+    this.renderLevels();
+    this.p1.reset(this.levelIndex); this.p2.reset(this.levelIndex);
+    Music.setProgress(0.3);
+  };
+  Battle.prototype.enter=function(){ this.reset(0); };
+  Battle.prototype.leave=function(){ this.p1.leave(); this.p2.leave(); };
+  Battle.prototype.renderCol=function(player,res){
+    var col=this.arena.querySelector('[data-player="'+player+'"]'); if(!col) return;
+    var r=col.querySelector('.result'); var html='';
+    if(res.type==='schulte') html='<div class="big">'+store.formatSeconds(res.used)+'</div><div class="sub">点错 '+res.wrong+' 次</div>';
+    else if(res.type==='stroop') html='<div class="big">'+res.score+' / '+res.total+'</div><div class="sub">答对题数</div>';
+    else html='<div class="big">'+store.formatSeconds(res.used)+'</div><div class="sub">点错 '+res.wrong+' 次</div>';
+    r.innerHTML=html; r.classList.add('show');
+  };
+  Battle.prototype.noteFinish=function(player,res){
+    this.order.push({player:player,res:res});
+    if(this.type==='stroop'){ if(this.order.length>=2) this.decide(); }
+    else { if(!this.decided){ this.decided=true; this.declare(player); } }
+  };
+  Battle.prototype.declare=function(player){
+    this.p1.leave(); this.p2.leave();
+    var cols=this.arena.querySelectorAll('.battle-col');
+    var winCol=this.arena.querySelector('[data-player="'+player+'"]');
+    var loseCol=this.arena.querySelector('[data-player="'+(player==='p1'?'p2':'p1')+'"]');
+    if(winCol) winCol.classList.add('win');
+    if(loseCol) loseCol.classList.add('lose');
+    this.banner.textContent='🏆 玩家'+(player==='p1'?'1（左）':'2（右）')+' 获胜！';
+    this.banner.className='battle-banner win';
+    Music.flourish();
+  };
+  Battle.prototype.decide=function(){
+    if(this.decided) return; this.decided=true;
+    var a=this.order[0], b=this.order[1];
+    var pa=a.res.score, pb=b.res.score, winner;
+    if(pa>pb) winner='p1'; else if(pb>pa) winner='p2'; else winner='tie';
+    this.p1.leave(); this.p2.leave();
+    if(winner==='tie'){
+      this.banner.textContent='🤝 平局！'; this.banner.className='battle-banner tie';
+      this.arena.querySelectorAll('.battle-col').forEach(function(c){ c.classList.add('win'); });
+    } else {
+      var winCol=this.arena.querySelector('[data-player="'+winner+'"]');
+      var loseCol=this.arena.querySelector('[data-player="'+(winner==='p1'?'p2':'p1')+'"]');
+      if(winCol) winCol.classList.add('win');
+      if(loseCol) loseCol.classList.add('lose');
+      this.banner.textContent='🏆 玩家'+(winner==='p1'?'1（左）':'2（右）')+' 获胜！';
+      this.banner.className='battle-banner win';
+      Music.flourish();
     }
   };
+  var battleSchulte=new Battle('schulte','sb-arena','sb-levels');
+  var battleStroop=new Battle('stroop','stb-arena','stb-levels');
+  var battleFind=new Battle('find','fb-arena','fb-levels');
+  var battles={ 'schulte-battle':battleSchulte, 'stroop-battle':battleStroop, 'find-battle':battleFind };
 
   /* ===================== 护眼休息 ===================== */
   var REST_MS=20000;
@@ -695,9 +902,9 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     '深呼吸，放松肩膀和脖子 🌿'
   ];
   var rest={
-    running:false, finished:false, _accum:0, _startAt:0, _timer:null, _tip:null, _tipIdx:0, inited:false,
+    running:false, finished:false, _accum:0, _startAt:0, _timer:null, _tip:null, _tipIdx:0,
     enter:function(){
-      if(!this.inited){ this.inited=true; $('rest-count').textContent=store.getRestCount(); }
+      if(!this._inited){ this._inited=true; $('rest-count').textContent=store.getRestCount(); }
       else if(this.running && !this.finished){ this.startTimer(); }
     },
     leave:function(){ this.pauseTimer(); this.clearTip(); },
@@ -772,12 +979,30 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   };
 
   /* ===================== 绑定 ===================== */
-  // 用闭包调用模块方法，确保 enter/leave 内的 this 正确指向模块对象
-  // （裸函数引用 enterMap['x']() 会让 this 丢失，导致 this.resetGame is not a function 等崩溃）
-  function enterPage(m){ return function(){ m.enter(); }; }
-  function leavePage(m){ return function(){ if(m.leave) m.leave(); }; }
-  enterMap={ index:enterPage(index), schulte:enterPage(schulte), stroop:enterPage(stroop), find:enterPage(find), rest:enterPage(rest), stats:enterPage(stats) };
-  leaveMap={ schulte:leavePage(schulte), stroop:leavePage(stroop), find:leavePage(find), rest:leavePage(rest) };
+  function enterPage(m){ return function(){ if(m&&m.enter) m.enter(); }; }
+  function leavePage(m){ return function(){ if(m&&m.leave) m.leave(); }; }
+  enterMap={
+    index:function(){ renderIndex(); },
+    schulte:function(){ schulteSP.reset(0); },
+    stroop:function(){ stroopSP.reset(0); },
+    find:function(){ findSP.reset(); },
+    rest:enterPage(rest),
+    stats:enterPage(stats),
+    'schulte-battle':function(){ battleSchulte.enter(); },
+    'stroop-battle':function(){ battleStroop.enter(); },
+    'find-battle':function(){ battleFind.enter(); }
+  };
+  leaveMap={
+    schulte:function(){ schulteSP.leave(); },
+    stroop:function(){ stroopSP.leave(); },
+    find:function(){ findSP.leave(); },
+    rest:leavePage(rest),
+    'schulte-battle':function(){ battleSchulte.leave(); },
+    'stroop-battle':function(){ battleStroop.leave(); },
+    'find-battle':function(){ battleFind.leave(); }
+  };
+
+  Music.start();
 
   document.addEventListener('click', function(e){
     var el=e.target.closest('[data-action]'); if(!el) return;
@@ -789,18 +1014,43 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
       case 'go-find': go('find'); break;
       case 'go-rest': go('rest'); break;
       case 'go-stats': go('stats'); break;
-      case 'level':
-        if(el.dataset.module==='schulte') schulte.resetGame(Number(el.dataset.index));
-        else if(el.dataset.module==='stroop') stroop.resetGame(Number(el.dataset.index));
+      case 'go-schulte-battle': go('schulte-battle'); break;
+      case 'go-stroop-battle': go('stroop-battle'); break;
+      case 'go-find-battle': go('find-battle'); break;
+      case 'level': {
+        var li=Number(el.dataset.index);
+        if(current==='schulte-battle') battleSchulte.reset(li);
+        else if(current==='stroop-battle') battleStroop.reset(li);
+        else if(current==='find-battle') battleFind.reset(li);
+        else if(current==='schulte') schulteSP.reset(li);
+        else if(current==='stroop') stroopSP.reset(li);
         break;
-      case 'cell':
-        if(current==='schulte') schulte.onTapCell(Number(el.dataset.index));
-        else if(current==='find') find.onTapCell(Number(el.dataset.index));
+      }
+      case 'cell': {
+        if(current.indexOf('-battle')>=0){
+          var col=el.closest('.battle-col'); if(!col) return;
+          var pid=col.dataset.player;
+          if(current==='schulte-battle') (pid==='p1'?battleSchulte.p1:battleSchulte.p2).onTapCell(Number(el.dataset.index));
+          else if(current==='find-battle') (pid==='p1'?battleFind.p1:battleFind.p2).onTapCell(Number(el.dataset.index));
+        } else {
+          if(current==='schulte') schulteSP.onTapCell(Number(el.dataset.index));
+          else if(current==='find') findSP.onTapCell(Number(el.dataset.index));
+        }
         break;
-      case 'option': stroop.onTap(el.dataset.key); break;
-      case 'schulte-restart': schulte.resetGame(schulte.levelIndex); break;
-      case 'stroop-restart': stroop.startGame(); break;
-      case 'find-restart': find.resetGame(); break;
+      }
+      case 'option': {
+        if(current==='stroop-battle'){
+          var col2=el.closest('.battle-col'); if(!col2) return;
+          (col2.dataset.player==='p1'?battleStroop.p1:battleStroop.p2).onTap(el.dataset.key);
+        } else if(current==='stroop'){ stroopSP.onTap(el.dataset.key); }
+        break;
+      }
+      case 'schulte-restart': schulteSP.reset(schulteSP.levelIndex); break;
+      case 'stroop-restart': stroopSP.reset(stroopSP.levelIndex); break;
+      case 'find-restart': findSP.reset(); break;
+      case 'battle-restart': {
+        var b=battles[el.dataset.module+'-battle']; if(b) b.reset(b.levelIndex); break;
+      }
       case 'rest-start': rest.startRest(); break;
       case 'rest-again': rest.startRest(); break;
       case 'stats-clear':
@@ -808,11 +1058,20 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
           store.clearAll(); stats.enter(); toast('已清除');
         }
         break;
+      case 'music-toggle': {
+        var on=Music.toggle();
+        $('music-btn').textContent=on?'🎵':'🔇';
+        break;
+      }
     }
   });
 
+  // 音量
+  var volEl=$('music-vol');
+  if(volEl){ Music.setVolume(Number(volEl.value)/100); volEl.addEventListener('input', function(){ Music.setVolume(Number(volEl.value)/100); }); }
+
   // 进入首页
-  index.enter();
+  renderIndex();
 })();
 </script>
 <script>
