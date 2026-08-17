@@ -140,6 +140,20 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 /* 找一找 */
 .find-tip{text-align:center; font-size:17px; font-weight:700; margin:10px 0; color:var(--ink); background:rgba(255,255,255,.6); border-radius:14px; padding:8px 10px;}
 
+/* 找不同（两幅画） */
+.diff-wrap{display:flex; gap:10px; justify-content:center; margin:12px 0;}
+.diff-side{flex:1; min-width:0;}
+.diff-cap{text-align:center; font-size:12px; font-weight:800; color:var(--main-d); margin-bottom:4px;}
+.diff-a,.diff-b{margin:6px auto; max-width:100%;}
+.diff-tip{text-align:center; font-size:16px; font-weight:800; margin:8px 0; color:var(--ink); background:rgba(255,255,255,.6); border-radius:14px; padding:8px 10px;}
+.battle-col .diff-wrap{gap:6px; margin:8px 0;}
+.battle-col .diff-cap{font-size:10px; margin-bottom:2px;}
+.battle-col .diff-a,.battle-col .diff-b{gap:5px;}
+.battle-col .diff-tip{font-size:12px; padding:5px 8px;}
+.battle-col .diff-a .cell,.battle-col .diff-b .cell{font-size:clamp(12px, calc((100cqw - (var(--n,3) - 1)*5px)/var(--n,3)*0.46), 26px);}
+/* 双指同时点击：去掉点击延迟、防止手势吞掉第二根手指 */
+.battle-col .cell,.battle-col .opt-btn{touch-action:manipulation;}
+
 /* 护眼 */
 .rest-ring{width:170px; height:170px; border-radius:50%; margin:22px auto 8px; background:conic-gradient(var(--green) var(--p,0%), #E6F4EC 0); display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:0 8px 22px rgba(63,191,110,.25);}
 .rest-seconds{font-size:60px; font-weight:900; color:#2F8F54; line-height:1;}
@@ -285,6 +299,21 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     <div class="row-btns"><button class="btn btn-secondary" data-action="find-restart">换一批</button></div>
   </section>
 
+  <!-- 找不同 -->
+  <section id="page-diff" class="page">
+    <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">找不同</div></div>
+    <div class="level-row" id="diff-levels"></div>
+    <div class="diff-tip">已找到 0 / 3 处</div>
+    <div class="timer">00:00</div>
+    <div class="diff-wrap">
+      <div class="diff-side"><div class="diff-cap">图 A</div><div class="diff-a grid"></div></div>
+      <div class="diff-side"><div class="diff-cap">图 B</div><div class="diff-b grid"></div></div>
+    </div>
+    <div class="result"></div>
+    <div class="row-btns"><button class="btn btn-secondary" data-action="diff-restart">换一批</button></div>
+    <div class="hint">两幅画里有 3~6 处不同，点出不一样的地方就可以啦～</div>
+  </section>
+
   <!-- 舒尔特·对战 -->
   <section id="page-schulte-battle" class="page battle-page">
     <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">舒尔特·对战</div></div>
@@ -313,6 +342,16 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     <div class="battle-banner" id="fb-banner"></div>
     <div class="row-btns"><button class="btn btn-secondary" data-action="battle-restart" data-module="find">重新开始</button></div>
     <div class="hint">玩家1找左侧、玩家2找右侧，先找全目标者获胜！</div>
+  </section>
+
+  <!-- 找不同·对战 -->
+  <section id="page-diff-battle" class="page battle-page">
+    <div class="topbar"><button class="back" data-action="back">← 返回</button><div class="ptitle">找不同·对战</div></div>
+    <div class="level-row" id="db-levels"></div>
+    <div class="battle-arena" id="db-arena"></div>
+    <div class="battle-banner" id="db-banner"></div>
+    <div class="row-btns"><button class="btn btn-secondary" data-action="battle-restart" data-module="diff">重新开始</button></div>
+    <div class="hint">玩家1找左侧、玩家2找右侧，先找全不同者获胜！</div>
   </section>
 
   <!-- 护眼休息 -->
@@ -346,7 +385,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 
   /* ===================== 本地存储 ===================== */
   var ROOT_KEY = 'focus_trainer_data';
-  var BEST_KEYS = ['schulte3','schulte4','schulte5','schulte6','schulteDyn','schulteIrr','find'];
+  var BEST_KEYS = ['schulte3','schulte4','schulte5','schulte6','schulteDyn','schulteIrr','find','diff'];
   var SCORE_KEYS = ['stroop'];
   function defaultData(){
     var best={}, score={};
@@ -389,7 +428,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     return {
       playCount:d.playCount,
       bestSchulte3:d.best.schulte3||0, bestSchulte4:d.best.schulte4||0, bestSchulte5:d.best.schulte5||0,
-      bestFind:d.best.find||0, bestStroop:d.score.stroop||0, restCount:d.restCount||0
+      bestFind:d.best.find||0, bestStroop:d.score.stroop||0, bestDiff:d.best.diff||0, restCount:d.restCount||0
     };
   }
   function clearAll(){ try{ localStorage.removeItem(ROOT_KEY); }catch(e){} return writeAll(defaultData()); }
@@ -484,7 +523,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   })();
 
   /* ===================== 路由 ===================== */
-  var PAGES=['index','schulte','stroop','find','rest','stats','schulte-battle','stroop-battle','find-battle'];
+  var PAGES=['index','schulte','stroop','find','diff','rest','stats','schulte-battle','stroop-battle','find-battle','diff-battle'];
   var enterMap={}, leaveMap={};
   var current='index';
   function go(page){
@@ -499,12 +538,14 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   var GAMES=[
     { key:'schulte', name:'舒尔特方格', emoji:'🔢', desc:'按顺序点数字，越快越棒' },
     { key:'stroop', name:'颜色挑战', emoji:'🎨', desc:'点“字的颜色”，别被字骗了' },
-    { key:'find', name:'找一找', emoji:'🔍', desc:'找出所有的目标图案' }
+    { key:'find', name:'找一找', emoji:'🔍', desc:'找出所有的目标图案' },
+    { key:'diff', name:'找不同', emoji:'🖼️', desc:'两幅画里找不同' }
   ];
   var BATTLES=[
     { key:'schulte-battle', name:'舒尔特', emoji:'🔢', desc:'顺序点数字' },
     { key:'stroop-battle', name:'颜色', emoji:'🎨', desc:'点颜色 PK' },
-    { key:'find-battle', name:'找一找', emoji:'🔍', desc:'抢先找全' }
+    { key:'find-battle', name:'找一找', emoji:'🔍', desc:'抢先找全' },
+    { key:'diff-battle', name:'找不同', emoji:'🖼️', desc:'找不同 PK' }
   ];
   function renderIndex(){
     var box=$('index-games'); box.innerHTML='';
@@ -556,6 +597,16 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     return { wordLabel:word.label, wordKey:word.key, colorKey:shown.key, colorHex:shown.hex, mode:mode, correctKey:(mode==='word'?word.key:shown.key) };
   }
   function instrText(mode){ return mode==='word' ? '请点出【字】的意思' : '请点出【字】的颜色'; }
+
+  /* ===================== 找不同（两幅画） ===================== */
+  var SCENE_POOL=['🌟','🍎','🐱','🌸','🐟','🎈','🍀','🐝','🍄','⚽️','🌞','🌙','🍊','🐶','🐰','🌳','🌈','🚀','⭐','🍉','🐢','🦋','🌻','🍓','🐥','🎀','🪁','🍔'];
+  var DIFF_LEVELS=[
+    {name:'入门', size:4, diff:3, bestKey:'diff', desc:'4x4·3处'},
+    {name:'进阶', size:4, diff:4, bestKey:'diff', desc:'4x4·4处'},
+    {name:'挑战', size:5, diff:5, bestKey:'diff', desc:'5x5·5处'},
+    {name:'高手', size:5, diff:6, bestKey:'diff', desc:'5x5·6处'}
+  ];
+  function rangeArr(n){ var a=[]; for(var i=0;i<n;i++) a.push(i); return a; }
 
   /* ===================== 舒尔特方格（可实例化） ===================== */
   function SchulteGame(root, cfg){
@@ -785,6 +836,87 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   };
   FindGame.prototype.leave=function(){ this.pauseTimer(); this.clearShake(); };
 
+  /* ===================== 找不同（可实例化） ===================== */
+  function DiffGame(root, cfg){
+    this.root=root; this.cfg=cfg||{};
+    this.q=function(s){ return root.querySelector(s); };
+    this.size=4; this.diffCount=3; this.cells=[]; this.found=0; this.totalDiff=3;
+    this.playing=false; this.finished=false; this.wrongCount=0;
+    this._accum=0; this._startAt=0; this._timer=null; this._shake=null;
+    this.inBattle=root.classList.contains('battle-col');
+  }
+  DiffGame.prototype.reset=function(li){
+    this.stopTimer(); this.clearShake(); this._accum=0; this._startAt=0;
+    var lv=DIFF_LEVELS[li==null?0:li]; this.levelIndex=li==null?0:li; this.level=lv;
+    this.size=lv.size; this.diffCount=lv.diff;
+    this.found=0; this.playing=false; this.finished=false; this.wrongCount=0;
+    this.generate(); this.renderGrid(); this.renderTimer('00:00');
+    var rs=this.q('.result'); if(rs) rs.classList.remove('show');
+    if(this.cfg.onProgress) this.cfg.onProgress(0);
+  };
+  DiffGame.prototype.generate=function(){
+    var total=this.size*this.size;
+    var pool=shuffle(SCENE_POOL);
+    var base=pool.slice(0,total);
+    var extra=pool.slice(total);   // 与底图不同的 emoji，保证替换后确实“不同”
+    var cells=[];
+    for(var i=0;i<total;i++) cells.push({a:base[i], b:base[i], isDiff:false, found:false});
+    var idxs=shuffle(rangeArr(total)).slice(0,this.diffCount);
+    var self=this;
+    idxs.forEach(function(i){
+      cells[i].isDiff=true;
+      var cand = extra.length ? extra[Math.floor(Math.random()*extra.length)] : SCENE_POOL[Math.floor(Math.random()*SCENE_POOL.length)];
+      var g=0; while(cand===cells[i].a && g<25){ cand = extra.length ? extra[Math.floor(Math.random()*extra.length)] : SCENE_POOL[Math.floor(Math.random()*SCENE_POOL.length)]; g++; }
+      cells[i].b=cand;
+    });
+    this.cells=cells; this.found=0; this.totalDiff=this.diffCount;
+  };
+  DiffGame.prototype.renderGrid=function(){
+    var ga=this.q('.diff-a'), gb=this.q('.diff-b'); if(!ga||!gb) return;
+    ga.innerHTML=''; gb.innerHTML=''; ga.style.setProperty('--n',this.size); gb.style.setProperty('--n',this.size);
+    var self=this;
+    this.cells.forEach(function(c,i){
+      var da=document.createElement('div'); da.className='cell'+(c.found?' found':''); da.textContent=c.a; da.dataset.action='cell'; da.dataset.index=i; ga.appendChild(da);
+      var db=document.createElement('div'); db.className='cell'+(c.found?' found':''); db.textContent=c.b; db.dataset.action='cell'; db.dataset.index=i; gb.appendChild(db);
+    });
+    var tip=this.q('.diff-tip'); if(tip) tip.textContent='已找到 '+this.found+' / '+this.totalDiff+' 处';
+  };
+  DiffGame.prototype.renderTimer=function(t){ var el=this.q('.timer'); if(el) el.textContent=t; };
+  DiffGame.prototype.startTimer=function(){
+    var self=this; this.stopTimer(); this._startAt=Date.now();
+    this._timer=setInterval(function(){ self.renderTimer(store.formatTime(self._accum+(Date.now()-self._startAt))); },100);
+  };
+  DiffGame.prototype.pauseTimer=function(){ if(this._timer){ this._accum+=Date.now()-this._startAt; this.stopTimer(); } };
+  DiffGame.prototype.stopTimer=function(){ if(this._timer){ clearInterval(this._timer); this._timer=null; } };
+  DiffGame.prototype.clearShake=function(){ if(this._shake){ clearTimeout(this._shake); this._shake=null; } var ga=this.q('.diff-a'),gb=this.q('.diff-b'); if(ga) ga.classList.remove('shake'); if(gb) gb.classList.remove('shake'); };
+  DiffGame.prototype.onTapCell=function(i){
+    if(this.finished) return;
+    var c=this.cells[i]; if(!c) return;
+    if(!this.playing){ this.playing=true; this.startTimer(); }
+    if(c.isDiff && !c.found){
+      c.found=true; this.found++;
+      var ga=this.q('.diff-a'), gb=this.q('.diff-b');
+      if(ga&&ga.children[i]){ ga.children[i].classList.add('found'); ga.children[i].textContent='✅'; }
+      if(gb&&gb.children[i]){ gb.children[i].classList.add('found'); gb.children[i].textContent='✅'; }
+      var tip=this.q('.diff-tip'); if(tip) tip.textContent='已找到 '+this.found+' / '+this.totalDiff+' 处';
+      if(this.cfg.onProgress) this.cfg.onProgress(this.found/this.totalDiff);
+      if(this.found>=this.totalDiff){ this.finish(); }
+    } else { this.onWrong(); }
+  };
+  DiffGame.prototype.onWrong=function(){
+    this.wrongCount++; vibrate();
+    var ga=this.q('.diff-a'), gb=this.q('.diff-b');
+    if(ga) ga.classList.add('shake'); if(gb) gb.classList.add('shake');
+    var self=this; this.clearShake(); this._shake=setTimeout(function(){ if(ga) ga.classList.remove('shake'); if(gb) gb.classList.remove('shake'); },340);
+  };
+  DiffGame.prototype.finish=function(){
+    this.pauseTimer();
+    var used=this._accum;
+    this.finished=true; this.playing=false; this.renderTimer(store.formatTime(used));
+    if(this.cfg.onFinish) this.cfg.onFinish({type:'diff',used:used,wrong:this.wrongCount}, this);
+  };
+  DiffGame.prototype.leave=function(){ this.pauseTimer(); this.clearShake(); };
+
   /* ===================== 单人模式实例 ===================== */
   var spSchulteFinish=function(res){
     var isNew=store.setBest(res.bestKey,res.used); store.incrPlayCount();
@@ -819,6 +951,17 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   var schulteSP=new SchulteGame($('page-schulte'), { onProgress:function(p){ Music.setProgress(0.3+p*0.5); }, onFinish:spSchulteFinish });
   var stroopSP=new StroopGame($('page-stroop'), { onProgress:function(p){ Music.setProgress(0.3+p*0.5); }, onFinish:spStroopFinish });
   var findSP=new FindGame($('page-find'), { onProgress:function(p){ Music.setProgress(0.3+p*0.5); }, onFinish:spFindFinish });
+  var spDiffFinish=function(res){
+    var isNew=store.setBest('diff',res.used); store.incrPlayCount();
+    var r=diffSP.q('.result');
+    var star=1; if(res.used<=20000 && res.wrong<=2) star=3; else if(res.used<=35000 && res.wrong<=4) star=2;
+    var stars=''; for(var k=0;k<star;k++) stars+='⭐';
+    r.innerHTML='<div class="big">'+store.formatSeconds(res.used)+'</div>'+
+      '<div class="sub">点错 '+res.wrong+' 次 · 历史最佳 '+store.formatSeconds(store.getBest('diff'))+'</div>'+
+      '<div class="record">'+stars+(isNew?' · 新纪录！':'')+'</div>';
+    r.classList.add('show'); toast(isNew?'新纪录！⭐':'全部找到啦！⭐');
+  };
+  var diffSP=new DiffGame($('page-diff'), { onProgress:function(p){ Music.setProgress(0.3+p*0.5); }, onFinish:spDiffFinish });
 
   /* ===================== 双人对战协调器 ===================== */
   function battleColHTML(player, type){
@@ -826,7 +969,8 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     var body='';
     if(type==='schulte') body='<div class="timer">00:00</div><div class="grid"></div>';
     else if(type==='stroop') body='<div class="stroop-progress"><i></i></div><div class="stroop-meta"><span class="meta-cur">1 / 10</span><span class="meta-best">最高 0 题</span></div><div class="stroop-instr">请点出【字】的颜色</div><div class="stroop-word">红</div><div class="stroop-feedback"></div><div class="stroop-options"></div>';
-    else body='<div class="find-tip">找出所有的 🌟</div><div class="timer">00:00</div><div class="grid"></div>';
+    else if(type==='find') body='<div class="find-tip">找出所有的 🌟</div><div class="timer">00:00</div><div class="grid"></div>';
+    else body='<div class="diff-tip">已找到 0 / 3 处</div><div class="timer">00:00</div><div class="diff-wrap"><div class="diff-side"><div class="diff-cap">图A</div><div class="diff-a grid"></div></div><div class="diff-side"><div class="diff-cap">图B</div><div class="diff-b grid"></div></div></div>';
     return '<div class="battle-col" data-player="'+player+'">'+head+body+'<div class="result"></div></div>';
   }
   function Battle(type, arenaId, levelRowId){
@@ -836,7 +980,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     var self=this;
     this.arena.innerHTML=battleColHTML('p1',type)+'<div class="battle-vs">VS</div>'+battleColHTML('p2',type);
     function makeGame(col, player){
-      return new (type==='schulte'?SchulteGame:type==='stroop'?StroopGame:FindGame)(col, {
+      return new (type==='schulte'?SchulteGame:type==='stroop'?StroopGame:type==='find'?FindGame:DiffGame)(col, {
         player:player,
         onProgress:function(p){ Music.setProgress(0.3+p*0.5); },
         onFinish:function(res,game){ self.renderCol(player,res); self.noteFinish(player,res); }
@@ -847,7 +991,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   }
   Battle.prototype.renderLevels=function(){
     var sr=$(this.levelRowId); if(!sr) return; var self=this; sr.innerHTML='';
-    var lv=this.type==='schulte'?SCHULTE_LEVELS:STROOP_LEVELS;
+    var lv=this.type==='schulte'?SCHULTE_LEVELS:this.type==='stroop'?STROOP_LEVELS:this.type==='find'?[]:DIFF_LEVELS;
     lv.forEach(function(l,i){
       var b=document.createElement('button'); b.className='level-btn'+(i===self.levelIndex?' active':'');
       b.innerHTML=l.name+'<small>'+l.desc+'</small>';
@@ -910,7 +1054,8 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   var battleSchulte=new Battle('schulte','sb-arena','sb-levels');
   var battleStroop=new Battle('stroop','stb-arena','stb-levels');
   var battleFind=new Battle('find','fb-arena','fb-levels');
-  var battles={ 'schulte-battle':battleSchulte, 'stroop-battle':battleStroop, 'find-battle':battleFind };
+  var battleDiff=new Battle('diff','db-arena','db-levels');
+  var battles={ 'schulte-battle':battleSchulte, 'stroop-battle':battleStroop, 'find-battle':battleFind, 'diff-battle':battleDiff };
 
   /* ===================== 护眼休息 ===================== */
   var REST_MS=20000;
@@ -987,6 +1132,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
         .concat([
         {emoji:'🎨',name:'颜色挑战',unit:'最高分',value:s.bestStroop>0?s.bestStroop+' 题':'暂无'},
         {emoji:'🔍',name:'找一找',unit:'最快用时',value:store.formatSeconds(s.bestFind)},
+        {emoji:'🖼️',name:'找不同',unit:'最快用时',value:store.formatSeconds(s.bestDiff)},
         {emoji:'👀',name:'护眼休息',unit:'累计次数',value:s.restCount>0?s.restCount+' 次':'暂无'}
       ]);
       var box=$('stats-items'); box.innerHTML='';
@@ -1006,20 +1152,24 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     schulte:function(){ schulteSP.reset(0); },
     stroop:function(){ stroopSP.reset(0); },
     find:function(){ findSP.reset(); },
+    diff:function(){ diffSP.reset(0); },
     rest:enterPage(rest),
     stats:enterPage(stats),
     'schulte-battle':function(){ battleSchulte.enter(); },
     'stroop-battle':function(){ battleStroop.enter(); },
-    'find-battle':function(){ battleFind.enter(); }
+    'find-battle':function(){ battleFind.enter(); },
+    'diff-battle':function(){ battleDiff.enter(); }
   };
   leaveMap={
     schulte:function(){ schulteSP.leave(); },
     stroop:function(){ stroopSP.leave(); },
     find:function(){ findSP.leave(); },
+    diff:function(){ diffSP.leave(); },
     rest:leavePage(rest),
     'schulte-battle':function(){ battleSchulte.leave(); },
     'stroop-battle':function(){ battleStroop.leave(); },
-    'find-battle':function(){ battleFind.leave(); }
+    'find-battle':function(){ battleFind.leave(); },
+    'diff-battle':function(){ battleDiff.leave(); }
   };
 
   Music.start();
@@ -1032,11 +1182,13 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
       case 'go-schulte': go('schulte'); break;
       case 'go-stroop': go('stroop'); break;
       case 'go-find': go('find'); break;
+      case 'go-diff': go('diff'); break;
       case 'go-rest': go('rest'); break;
       case 'go-stats': go('stats'); break;
       case 'go-schulte-battle': go('schulte-battle'); break;
       case 'go-stroop-battle': go('stroop-battle'); break;
       case 'go-find-battle': go('find-battle'); break;
+      case 'go-diff-battle': go('diff-battle'); break;
       case 'level': {
         var li=Number(el.dataset.index);
         if(current==='schulte-battle') battleSchulte.reset(li);
@@ -1047,27 +1199,23 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
         break;
       }
       case 'cell': {
-        if(current.indexOf('-battle')>=0){
-          var col=el.closest('.battle-col'); if(!col) return;
-          var pid=col.dataset.player;
-          if(current==='schulte-battle') (pid==='p1'?battleSchulte.p1:battleSchulte.p2).onTapCell(Number(el.dataset.index));
-          else if(current==='find-battle') (pid==='p1'?battleFind.p1:battleFind.p2).onTapCell(Number(el.dataset.index));
-        } else {
-          if(current==='schulte') schulteSP.onTapCell(Number(el.dataset.index));
-          else if(current==='find') findSP.onTapCell(Number(el.dataset.index));
-        }
+        // 对战内的点击改由 pointerdown 统一处理（支持双指同时点击），这里仅处理单人模式
+        if(current.indexOf('-battle')>=0) break;
+        if(current==='schulte') schulteSP.onTapCell(Number(el.dataset.index));
+        else if(current==='find') findSP.onTapCell(Number(el.dataset.index));
+        else if(current==='diff') diffSP.onTapCell(Number(el.dataset.index));
         break;
       }
       case 'option': {
-        if(current==='stroop-battle'){
-          var col2=el.closest('.battle-col'); if(!col2) return;
-          (col2.dataset.player==='p1'?battleStroop.p1:battleStroop.p2).onTap(el.dataset.key);
-        } else if(current==='stroop'){ stroopSP.onTap(el.dataset.key); }
+        // 对战内的颜色点击改由 pointerdown 处理
+        if(current==='stroop-battle') break;
+        else if(current==='stroop'){ stroopSP.onTap(el.dataset.key); }
         break;
       }
       case 'schulte-restart': schulteSP.reset(schulteSP.levelIndex); break;
       case 'stroop-restart': stroopSP.reset(stroopSP.levelIndex); break;
       case 'find-restart': findSP.reset(); break;
+      case 'diff-restart': diffSP.reset(diffSP.levelIndex); break;
       case 'battle-restart': {
         var b=battles[el.dataset.module+'-battle']; if(b) b.reset(b.levelIndex); break;
       }
@@ -1085,6 +1233,29 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
       }
     }
   });
+
+  /* ===================== 对战：双指同时点击支持 ===================== */
+  /* 触屏上两根手指同时点，浏览器会把第二次点击当成多指手势而吞掉合成 click，
+     导致“两人不能同时点”。改用 pointerdown（每根手指一个独立事件）处理对战内交互，
+     并 preventDefault 抑制合成 click / 手势，确保两位玩家可真正同时操作。 */
+  function battleTapDown(e){
+    if(current.indexOf('-battle')<0) return;
+    var t=e.target;
+    if(!t || !t.closest) return;
+    var el=t.closest('[data-action="cell"],[data-action="option"]'); if(!el) return;
+    var col=el.closest('.battle-col'); if(!col) return;
+    var pid=col.dataset.player; var a=el.dataset.action;
+    if(a==='cell'){
+      var idx=Number(el.dataset.index);
+      if(current==='schulte-battle') (pid==='p1'?battleSchulte.p1:battleSchulte.p2).onTapCell(idx);
+      else if(current==='find-battle') (pid==='p1'?battleFind.p1:battleFind.p2).onTapCell(idx);
+      else if(current==='diff-battle') (pid==='p1'?battleDiff.p1:battleDiff.p2).onTapCell(idx);
+    } else if(a==='option'){
+      if(current==='stroop-battle') (pid==='p1'?battleStroop.p1:battleStroop.p2).onTap(el.dataset.key);
+    }
+    e.preventDefault();
+  }
+  document.addEventListener('pointerdown', battleTapDown, {passive:false});
 
   // 音量
   var volEl=$('music-vol');
