@@ -19,7 +19,7 @@
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 html,body{margin:0; padding:0; font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; color:var(--ink); overflow-x:hidden;}
-body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh; min-height:calc(var(--vh,1vh) * 100); min-height:100dvh;}
+body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;}
 .app{max-width:480px; margin:0 auto; padding:0 0 32px; position:relative;}
 .page{display:none; padding:20px 18px 0;}
 .page.active{display:block; animation:fade .25s ease;}
@@ -140,26 +140,19 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 /* 找一找 */
 .find-tip{text-align:center; font-size:17px; font-weight:700; margin:10px 0; color:var(--ink); background:rgba(255,255,255,.6); border-radius:14px; padding:8px 10px;}
 
-/* 找不同（两幅插画） */
+/* 找不同（两幅画） */
 .diff-wrap{display:flex; gap:10px; justify-content:center; margin:12px 0;}
-.diff-side{flex:1; min-width:0; background:rgba(255,255,255,.55); border-radius:16px; padding:6px; box-shadow:0 4px 14px rgba(80,120,200,.15);}
+.diff-side{flex:1; min-width:0;}
 .diff-cap{text-align:center; font-size:12px; font-weight:800; color:var(--main-d); margin-bottom:4px;}
-.diff-a,.diff-b{margin:0 auto; max-width:100%;}
-.diff-svg{display:block; width:100%; height:auto; border-radius:12px; background:#eaf3ff; touch-action:manipulation; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent;}
-.diff-svg .hot{fill:rgba(0,0,0,0); pointer-events:all; cursor:pointer;}
-.diff-svg .hot.found{fill:rgba(46,204,113,.20);}
-.diff-svg .mark{pointer-events:none;}
-.diff-svg .mark circle{fill:rgba(46,204,113,.22); stroke:#27ae60; stroke-width:2;}
-.diff-svg .mark text{font-size:15px; text-anchor:middle; dominant-baseline:central;}
+.diff-a,.diff-b{margin:6px auto; max-width:100%;}
 .diff-tip{text-align:center; font-size:16px; font-weight:800; margin:8px 0; color:var(--ink); background:rgba(255,255,255,.6); border-radius:14px; padding:8px 10px;}
 .battle-col .diff-wrap{gap:6px; margin:8px 0;}
-.battle-col .diff-side{background:rgba(255,255,255,.5); padding:4px; border-radius:12px;}
 .battle-col .diff-cap{font-size:10px; margin-bottom:2px;}
+.battle-col .diff-a,.battle-col .diff-b{gap:5px;}
 .battle-col .diff-tip{font-size:12px; padding:5px 8px;}
-.diff-wrap.shake{animation:diffShake .34s;}
-@keyframes diffShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.battle-col .diff-a .cell,.battle-col .diff-b .cell{font-size:clamp(12px, calc((100cqw - (var(--n,3) - 1)*5px)/var(--n,3)*0.46), 26px);}
 /* 双指同时点击：去掉点击延迟、防止手势吞掉第二根手指 */
-.battle-col .cell,.battle-col .opt-btn,.battle-col .diff-svg .hot{touch-action:manipulation;}
+.battle-col .cell,.battle-col .opt-btn{touch-action:manipulation;}
 
 /* 护眼 */
 .rest-ring{width:170px; height:170px; border-radius:50%; margin:22px auto 8px; background:conic-gradient(var(--green) var(--p,0%), #E6F4EC 0); display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:0 8px 22px rgba(63,191,110,.25);}
@@ -186,48 +179,32 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 .item-value{font-size:16px; font-weight:800; color:var(--main-d);}
 
 /* ===================== 双人同屏对战（横排自适应） ===================== */
-/* ===================== 双人同屏对战（横屏自适应·全屏） ===================== */
-.page.battle-page{
-  width:100vw; max-width:100vw; position:relative; left:50%; margin-left:-50vw;
-  box-sizing:border-box;
-  padding: calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 10px);
-}
-/* 激活后整页占满动态视口，纵向 flex 布局，保证底部按钮不被手势栏遮挡、整页可见 */
-.page.battle-page.active{
-  display:flex; flex-direction:column;
-  height:100vh; height:calc(var(--vh,1vh) * 100); height:100dvh;
-  overflow:hidden;
-}
-.battle-page .topbar{flex:none;}
-.battle-arena{display:flex; gap:10px; margin-top:8px; align-items:stretch; justify-content:center; width:100%; flex:1 1 auto; min-height:0;}
+.page.battle-page{ width:100vw; max-width:100vw; position:relative; left:50%; margin-left:-50vw; padding:18px 14px 0; }
+.battle-arena{display:flex; gap:10px; margin-top:8px; align-items:stretch; justify-content:center; width:100%;}
 .battle-vs{flex:none; width:32px; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:900; color:var(--main-d); text-shadow:0 1px 2px rgba(255,255,255,.6);}
-.battle-col{flex:1 1 0; min-width:0; background:rgba(255,255,255,.72); border-radius:18px; padding:8px 6px 10px; box-shadow:0 4px 14px rgba(74,144,226,.12); display:flex; flex-direction:column; min-height:0; overflow:auto;}
+.battle-col{flex:1 1 0; min-width:0; background:rgba(255,255,255,.72); border-radius:18px; padding:8px 6px 10px; box-shadow:0 4px 14px rgba(74,144,226,.12); display:flex; flex-direction:column; overflow:hidden;}
 .battle-col.win{box-shadow:0 0 0 3px var(--green), 0 4px 14px rgba(63,191,110,.3);}
 .battle-col.lose{opacity:.55;}
-.battle-head{display:flex; justify-content:space-between; align-items:center; gap:6px; font-size:13px; font-weight:800; color:var(--main-d); padding:0 4px 6px; flex:none;}
+.battle-head{display:flex; justify-content:space-between; align-items:center; gap:6px; font-size:13px; font-weight:800; color:var(--main-d); padding:0 4px 6px;}
 .battle-head .ptimer{font-variant-numeric:tabular-nums; color:var(--ink); font-weight:700; font-size:15px;}
-/* 网格按列高自适应为正方形，横向纵向都不溢出，Mate70 横屏也能完整放下 */
-.battle-col .grid{flex:1 1 auto; min-height:0; width:auto; height:100%; aspect-ratio:1; max-width:100%; max-height:100%; gap:6px; margin:6px auto; container-type:inline-size;}
-.battle-col .grid.irregular{aspect-ratio:auto; height:100%; max-width:100%; max-height:100%;}
+.battle-col .grid{width:100%; max-width:min(94%,400px); gap:6px; margin:8px auto; container-type:inline-size;}
+.battle-col .grid.irregular{height:clamp(240px,40vh,360px); max-width:min(94%,400px);}
 .battle-col .cell{font-size:clamp(13px, calc((100cqw - (var(--n,3) - 1)*6px)/var(--n,3)*0.5), 34px); border-radius:12px; box-shadow:0 3px 8px rgba(74,144,226,.1);}
-.battle-col .timer{font-size:22px; margin:4px 0; flex:none;}
+.battle-col .timer{font-size:22px; margin:4px 0;}
 .battle-col .stroop-word{font-size:clamp(30px,9cqw,56px); margin:8px 0 4px;}
 .battle-col .stroop-options{gap:8px; margin-top:10px;}
 .battle-col .opt-btn{padding:14px 0; font-size:clamp(15px,4.5cqw,20px); border-radius:14px;}
-.battle-col .find-tip{font-size:13px; padding:6px 8px; flex:none;}
-.battle-col .diff-tip{font-size:12px; padding:5px 8px; flex:none;}
-.battle-col .result{margin-top:8px; padding:12px; flex:none;}
+.battle-col .find-tip{font-size:13px; padding:6px 8px;}
+.battle-col .result{margin-top:8px; padding:12px;}
 .battle-col .result .big{font-size:18px;}
 .battle-col .result .sub{font-size:12px;}
-.battle-banner{text-align:center; font-size:20px; font-weight:900; color:var(--main-d); margin:14px 0 4px; min-height:28px; padding:0 10px; flex:none;}
+.battle-banner{text-align:center; font-size:20px; font-weight:900; color:var(--main-d); margin:14px 0 4px; min-height:28px; padding:0 10px;}
 .battle-banner.win{color:var(--green);}
 .battle-banner.tie{color:var(--ink2);}
-/* 对战页内关卡选择 / 底部按钮：固定不压缩 */
-.battle-page .level-row{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; flex:none;}
+/* 对战页内关卡选择：紧凑自适应换行 */
+.battle-page .level-row{display:flex; flex-wrap:wrap; gap:6px; justify-content:center;}
 .battle-page .level-btn{min-width:0; flex:1 1 30%; padding:7px 6px; font-size:13px;}
 .battle-page .level-btn small{font-size:9px; margin-top:1px;}
-.battle-page .row-btns{flex:none;}
-.battle-page .hint{flex:none;}
 /* 窄屏 / 竖屏手机：缩小字号与间距，保证两列并列不溢出 */
 @media (max-width:480px){
   .battle-arena{gap:7px;}
@@ -237,44 +214,10 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   .battle-col .opt-btn{font-size:clamp(13px,5cqw,17px); padding:12px 0;}
   .battle-col .timer{font-size:18px;}
 }
-/* 双人对战：竖屏直接显示，不再强制横屏（横屏媒体查询仅做紧凑适配） */
-/* 竖屏对战：紧凑布局，顶部栏/关卡/横幅压缩，两列并排同屏可见 */
-@media (orientation:portrait){
-  .battle-page .topbar{margin-bottom:8px; padding:6px 10px;}
-  .battle-page .level-row{gap:5px;}
-  .battle-page .level-btn{padding:5px 4px; font-size:12px;}
-  .battle-page .level-btn small{font-size:8px; margin-top:0;}
-  .battle-banner{margin:6px 0 2px; font-size:17px; min-height:22px;}
-  .battle-arena{gap:6px; margin-top:4px;}
-  .battle-vs{width:22px; font-size:16px;}
-  .battle-col{padding:6px 4px 8px; border-radius:14px;}
-  .battle-col .timer{font-size:17px; margin:2px 0;}
-  .battle-col .cell{border-radius:10px;}
-  .battle-col .find-tip,.battle-col .diff-tip{font-size:12px; padding:5px 6px;}
-}
-/* 横屏小高度：紧凑放大，确保整页在 Mate70 等机型全屏可见 */
-@media (orientation:landscape) and (max-height:560px){
-  .page.battle-page{padding-top:calc(env(safe-area-inset-top,0px) + 6px); padding-bottom:calc(env(safe-area-inset-bottom,0px) + 6px);}
-  .battle-arena{gap:10px; margin-top:4px;}
-  .battle-col{padding:6px 8px 8px;}
-  .battle-col .grid{max-width:min(96%,440px);}
-  .battle-head{font-size:12px; padding-bottom:3px;}
-  .battle-col .timer{font-size:18px; margin:2px 0;}
-  .battle-col .diff-wrap{flex:1 1 auto; min-height:0; align-items:center;}
-  .battle-col .diff-side{max-width:48%;}
-  .battle-col .diff-svg{max-height:100%; width:auto;}
-  .battle-col .stroop-word{font-size:clamp(22px,7cqw,40px); margin:4px 0 2px;}
-  .battle-col .stroop-options{gap:6px; margin-top:6px;}
-  .battle-col .opt-btn{padding:10px 0; font-size:clamp(12px,4cqw,16px);}
-  .battle-col .find-tip,.battle-col .diff-tip{font-size:11px; padding:4px 6px; margin:4px 0;}
-}
 /* 超宽屏：限制对战区最大宽度，避免两列过宽留白过多 */
 @media (min-width:900px){
   .battle-arena{max-width:960px; margin:8px auto 0;}
 }
-/* 对战页全屏背景图：横屏/宽屏铺满整个屏幕，消除两侧白边不留白（复用首页插画，可按需替换） */
-.full-bg{display:none;}
-body.in-battle .full-bg{display:block; position:fixed; inset:0; z-index:-3; background:url('assets/images/home-bg.jpg') center center/cover no-repeat;}
 
 /* Toast */
 .toast{position:fixed; left:50%; bottom:80px; transform:translateX(-50%) translateY(20px); background:rgba(46,64,87,.92); color:#fff; padding:11px 20px; border-radius:20px; font-size:14px; opacity:0; pointer-events:none; transition:.25s; z-index:99; white-space:nowrap;}
@@ -284,7 +227,6 @@ body.in-battle .full-bg{display:block; position:fixed; inset:0; z-index:-3; back
 <body>
 <div class="home-bg"></div>
 <div class="home-mask"></div>
-<div class="full-bg"></div>
 <div class="app">
 <div class="music-ctrl">
   <button class="music-btn" id="music-btn" data-action="music-toggle" title="背景音乐">🔇</button>
@@ -364,8 +306,8 @@ body.in-battle .full-bg{display:block; position:fixed; inset:0; z-index:-3; back
     <div class="diff-tip">已找到 0 / 3 处</div>
     <div class="timer">00:00</div>
     <div class="diff-wrap">
-      <div class="diff-side"><div class="diff-cap">图 A</div><div class="diff-a"></div></div>
-      <div class="diff-side"><div class="diff-cap">图 B</div><div class="diff-b"></div></div>
+      <div class="diff-side"><div class="diff-cap">图 A</div><div class="diff-a grid"></div></div>
+      <div class="diff-side"><div class="diff-cap">图 B</div><div class="diff-b grid"></div></div>
     </div>
     <div class="result"></div>
     <div class="row-btns"><button class="btn btn-secondary" data-action="diff-restart">换一批</button></div>
@@ -589,7 +531,6 @@ body.in-battle .full-bg{display:block; position:fixed; inset:0; z-index:-3; back
     PAGES.forEach(function(p){ $('page-'+p).classList.remove('active'); });
     $('page-'+page).classList.add('active');
     current=page;
-    document.body.classList.toggle('in-battle', page.indexOf('-battle')>=0);
     if(enterMap[page]) enterMap[page]();
   }
 
@@ -660,67 +601,11 @@ body.in-battle .full-bg{display:block; position:fixed; inset:0; z-index:-3; back
   /* ===================== 找不同（两幅画） ===================== */
   var SCENE_POOL=['🌟','🍎','🐱','🌸','🐟','🎈','🍀','🐝','🍄','⚽️','🌞','🌙','🍊','🐶','🐰','🌳','🌈','🚀','⭐','🍉','🐢','🦋','🌻','🍓','🐥','🎀','🪁','🍔'];
   var DIFF_LEVELS=[
-    {name:'入门', diff:3, bestKey:'diff', desc:'3处'},
-    {name:'进阶', diff:4, bestKey:'diff', desc:'4处'},
-    {name:'挑战', diff:5, bestKey:'diff', desc:'5处'},
-    {name:'高手', diff:6, bestKey:'diff', desc:'6处'}
+    {name:'入门', size:4, diff:3, bestKey:'diff', desc:'4x4·3处'},
+    {name:'进阶', size:4, diff:4, bestKey:'diff', desc:'4x4·4处'},
+    {name:'挑战', size:5, diff:5, bestKey:'diff', desc:'5x5·5处'},
+    {name:'高手', size:5, diff:6, bestKey:'diff', desc:'5x5·6处'}
   ];
-  /* 每个场景是一整张插画；objects 里每个对象有 a(原图)/b(变化图) 两段 SVG，
-     以及热区包围盒 x/y/w/h。生成时随机选 3~6 个对象在 B 图用 b 渲染，玩家找出不同。 */
-  var DIFF_SCENES=[
-    { name:'阳光公园', vb:'0 0 200 150',
-      bg:'<rect x="0" y="0" width="200" height="150" fill="#bfe3ff"/><rect x="0" y="106" width="200" height="44" fill="#9bdc7a"/><ellipse cx="100" cy="150" rx="70" ry="40" fill="#8fd66e" opacity=".5"/>',
-      objects:[
-        { x:13,y:11,w:30,h:30, a:'<circle cx="28" cy="26" r="15" fill="#ffd54a"/><g stroke="#ffd54a" stroke-width="3" stroke-linecap="round"><line x1="28" y1="2" x2="28" y2="8"/><line x1="28" y1="44" x2="28" y2="50"/><line x1="4" y1="26" x2="10" y2="26"/><line x1="46" y1="26" x2="52" y2="26"/><line x1="11" y1="9" x2="15" y2="13"/><line x1="41" y1="39" x2="45" y2="43"/><line x1="45" y1="9" x2="41" y2="13"/><line x1="15" y1="39" x2="11" y2="43"/></g>', b:'<circle cx="28" cy="26" r="14" fill="#ffb74a"/>' },
-        { x:118,y:18,w:56,h:26, a:'<g fill="#ffffff"><ellipse cx="150" cy="30" rx="20" ry="12"/><ellipse cx="132" cy="34" rx="13" ry="9"/><ellipse cx="168" cy="34" rx="13" ry="9"/></g>', b:'<g fill="#c7d0d9"><ellipse cx="150" cy="30" rx="20" ry="12"/><ellipse cx="132" cy="34" rx="13" ry="9"/><ellipse cx="168" cy="34" rx="13" ry="9"/></g>' },
-        { x:54,y:36,w:44,h:22, a:'<g fill="#ffffff"><ellipse cx="78" cy="46" rx="16" ry="10"/><ellipse cx="64" cy="50" rx="10" ry="7"/><ellipse cx="92" cy="50" rx="10" ry="7"/></g>', b:'' },
-        { x:14,y:66,w:50,h:56, a:'<rect x="34" y="92" width="8" height="30" fill="#9c6b3f"/><circle cx="38" cy="88" r="22" fill="#4caf50"/>', b:'<rect x="34" y="92" width="8" height="30" fill="#9c6b3f"/><circle cx="38" cy="88" r="22" fill="#f4c430"/>' },
-        { x:90,y:100,w:20,h:30, a:'<g><line x1="100" y1="128" x2="100" y2="112" stroke="#3f9b4a" stroke-width="3"/><circle cx="100" cy="108" r="7" fill="#ff5b7a"/><circle cx="100" cy="108" r="3" fill="#ffd54a"/></g>', b:'<g><line x1="100" y1="128" x2="100" y2="112" stroke="#3f9b4a" stroke-width="3"/><circle cx="100" cy="108" r="7" fill="#4a90ff"/><circle cx="100" cy="108" r="3" fill="#ffd54a"/></g>' },
-        { x:114,y:104,w:22,h:26, a:'<g><line x1="124" y1="128" x2="124" y2="116" stroke="#3f9b4a" stroke-width="3"/><circle cx="124" cy="112" r="6" fill="#ffd54a"/></g>', b:'' },
-        { x:146,y:50,w:24,h:18, a:'<g stroke="#5b6b7a" stroke-width="2.5" fill="none" stroke-linecap="round"><path d="M150 60 q5 -6 10 0 q5 -6 10 0"/></g>', b:'' },
-        { x:60,y:52,w:28,h:22, a:'<g><ellipse cx="68" cy="62" rx="6" ry="8" fill="#b06bff"/><ellipse cx="80" cy="62" rx="6" ry="8" fill="#b06bff"/><line x1="74" y1="62" x2="74" y2="62" stroke="#555" stroke-width="1.5"/></g>', b:'' },
-        { x:130,y:104,w:56,h:34, a:'<ellipse cx="158" cy="120" rx="26" ry="14" fill="#5bc8ff"/>', b:'' },
-        { x:148,y:108,w:26,h:22, a:'<g fill="#ff8a3d"><path d="M150 118 q8 -7 16 0 q-8 7 -16 0z"/><path d="M166 118 l6 -4 v8 z"/></g>', b:'' },
-        { x:148,y:62,w:40,h:52, a:'<rect x="150" y="80" width="36" height="34" fill="#fff3e0"/><path d="M148 80 L168 62 L188 80 Z" fill="#e74c3c"/><rect x="164" y="92" width="10" height="22" fill="#9c6b3f"/>', b:'<rect x="150" y="80" width="36" height="34" fill="#fff3e0"/><path d="M148 80 L168 62 L188 80 Z" fill="#4a90ff"/><rect x="164" y="92" width="10" height="22" fill="#9c6b3f"/>' },
-        { x:172,y:28,w:22,h:42, a:'<ellipse cx="182" cy="40" rx="9" ry="12" fill="#ff5b5b"/><line x1="182" y1="52" x2="182" y2="66" stroke="#999" stroke-width="1"/>', b:'' },
-        { x:40,y:116,w:22,h:20, a:'<g stroke="#3f9b4a" stroke-width="2" stroke-linecap="round"><path d="M44 132 q-2 -10 0 -14"/><path d="M50 132 q2 -12 4 -16"/><path d="M56 132 q-1 -9 1 -13"/></g>', b:'<g stroke="#d9b34a" stroke-width="2" stroke-linecap="round"><path d="M44 132 q-2 -10 0 -14"/><path d="M50 132 q2 -12 4 -16"/><path d="M56 132 q-1 -9 1 -13"/></g>' },
-        { x:90,y:14,w:22,h:22, a:'<path d="M100 18 l3 7 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1z" fill="#ffd54a"/>', b:'' },
-        { x:74,y:90,w:34,h:22, a:'<ellipse cx="90" cy="100" rx="14" ry="10" fill="#3f9b4a"/>', b:'' }
-      ]
-    },
-    { name:'海边沙滩', vb:'0 0 200 150',
-      bg:'<rect x="0" y="0" width="200" height="92" fill="#7ec8ff"/><rect x="0" y="92" width="200" height="58" fill="#ffe0a3"/><path d="M0 92 q50 -8 100 0 t100 0 v6 H0 Z" fill="#bfeaff"/>',
-      objects:[
-        { x:150,y:10,w:34,h:34, a:'<circle cx="167" cy="27" r="14" fill="#ffd54a"/><g stroke="#ffd54a" stroke-width="3" stroke-linecap="round"><line x1="167" y1="5" x2="167" y2="11"/><line x1="167" y1="43" x2="167" y2="49"/><line x1="145" y1="27" x2="151" y2="27"/><line x1="183" y1="27" x2="189" y2="27"/><line x1="151" y1="11" x2="155" y2="15"/><line x1="179" y1="39" x2="183" y2="43"/><line x1="183" y1="11" x2="179" y2="15"/><line x1="155" y1="39" x2="151" y2="43"/></g>', b:'<circle cx="167" cy="27" r="13" fill="#ffb74a"/>' },
-        { x:20,y:20,w:54,h:24, a:'<g fill="#ffffff"><ellipse cx="48" cy="32" rx="20" ry="12"/><ellipse cx="30" cy="36" rx="13" ry="9"/><ellipse cx="66" cy="36" rx="13" ry="9"/></g>', b:'<g fill="#c7d0d9"><ellipse cx="48" cy="32" rx="20" ry="12"/><ellipse cx="30" cy="36" rx="13" ry="9"/><ellipse cx="66" cy="36" rx="13" ry="9"/></g>' },
-        { x:60,y:72,w:46,h:32, a:'<path d="M70 96 l24 0 -12 -22 z" fill="#ffffff"/><rect x="81" y="74" width="2" height="22" fill="#8a5a2b"/><path d="M83 76 l16 18 -16 0 z" fill="#ff7a7a"/><rect x="64" y="96" width="36" height="6" rx="3" fill="#8a5a2b"/>', b:'' },
-        { x:116,y:30,w:24,h:18, a:'<g stroke="#444" stroke-width="2.5" fill="none" stroke-linecap="round"><path d="M120 40 q5 -6 10 0 q5 -6 10 0"/></g>', b:'' },
-        { x:44,y:106,w:34,h:22, a:'<g fill="#ff6b4a"><ellipse cx="60" cy="118" rx="12" ry="8"/><path d="M48 118 l-8 -4" stroke="#ff6b4a" stroke-width="3"/><path d="M72 118 l8 -4" stroke="#ff6b4a" stroke-width="3"/><circle cx="56" cy="114" r="1.5" fill="#fff"/><circle cx="64" cy="114" r="1.5" fill="#fff"/></g>', b:'' },
-        { x:90,y:106,w:22,h:22, a:'<path d="M100 122 q-10 -14 0 -14 q10 0 0 14z" fill="#ffb6c1"/>', b:'' },
-        { x:134,y:64,w:36,h:60, a:'<path d="M150 120 q4 -30 0 -50" stroke="#9c6b3f" stroke-width="5" fill="none"/><g fill="#3f9b4a"><ellipse cx="150" cy="70" rx="16" ry="7"/></g>', b:'<path d="M150 120 q4 -30 0 -50" stroke="#9c6b3f" stroke-width="5" fill="none"/><g fill="#f4c430"><ellipse cx="150" cy="70" rx="16" ry="7"/></g>' },
-        { x:26,y:94,w:30,h:30, a:'<circle cx="40" cy="108" r="12" fill="none" stroke="#ff5b5b" stroke-width="5"/><circle cx="40" cy="108" r="12" fill="none" stroke="#fff" stroke-width="5" stroke-dasharray="6 6"/>', b:'' },
-        { x:28,y:50,w:26,h:22, a:'<g fill="#ffd54a"><path d="M30 60 q8 -6 16 0 q-8 6 -16 0z"/><path d="M46 60 l5 -3 v6z"/></g>', b:'' },
-        { x:168,y:48,w:24,h:54, a:'<rect x="172" y="60" width="14" height="40" fill="#fff"/><rect x="172" y="70" width="14" height="6" fill="#e74c3c"/><rect x="172" y="84" width="14" height="6" fill="#e74c3c"/><path d="M170 60 l9 -10 9 10z" fill="#e74c3c"/>', b:'' },
-        { x:94,y:84,w:42,h:38, a:'<g fill="#e8c98a"><rect x="100" y="100" width="30" height="20"/><rect x="96" y="92" width="8" height="10"/><rect x="126" y="92" width="8" height="10"/><rect x="108" y="86" width="14" height="16"/></g>', b:'' },
-        { x:148,y:88,w:32,h:34, a:'<path d="M150 100 q14 -16 28 0z" fill="#ff8a3d"/><line x1="164" y1="100" x2="164" y2="120" stroke="#8a5a2b" stroke-width="2"/>', b:'' },
-        { x:70,y:104,w:22,h:22, a:'<path d="M80 110 l3 7 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1z" fill="#ff9f43"/>', b:'' },
-        { x:100,y:14,w:22,h:22, a:'<path d="M110 18 l3 7 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1z" fill="#fff3a0"/>', b:'' }
-      ]
-    }
-  ];
-  function buildDiffSVG(scene, diffSet, which){
-    var parts=[scene.bg];
-    scene.objects.forEach(function(o,i){
-      var frag=(which==='b'&&diffSet[i])?o.b:o.a;
-      if(frag) parts.push(frag);
-    });
-    scene.objects.forEach(function(o,i){
-      var cx=o.x+o.w/2, cy=o.y+o.h/2, r=Math.min(o.w,o.h)/2+2;
-      parts.push('<rect class="hot" data-action="cell" data-index="'+i+'" x="'+o.x+'" y="'+o.y+'" width="'+o.w+'" height="'+o.h+'"/>');
-      parts.push('<g class="mark" data-mi="'+i+'" style="display:none"><circle cx="'+cx+'" cy="'+cy+'" r="'+r+'"/><text x="'+cx+'" y="'+cy+'">✅</text></g>');
-    });
-    return '<svg class="diff-svg" viewBox="'+scene.vb+'" preserveAspectRatio="xMidYMid meet">'+parts.join('')+'</svg>';
-  }
   function rangeArr(n){ var a=[]; for(var i=0;i<n;i++) a.push(i); return a; }
 
   /* ===================== 舒尔特方格（可实例化） ===================== */
@@ -955,7 +840,7 @@ body.in-battle .full-bg{display:block; position:fixed; inset:0; z-index:-3; back
   function DiffGame(root, cfg){
     this.root=root; this.cfg=cfg||{};
     this.q=function(s){ return root.querySelector(s); };
-    this.scene=null; this.cells=[]; this.diffSet={}; this.found=0; this.totalDiff=3; this.diffCount=3;
+    this.size=4; this.diffCount=3; this.cells=[]; this.found=0; this.totalDiff=3;
     this.playing=false; this.finished=false; this.wrongCount=0;
     this._accum=0; this._startAt=0; this._timer=null; this._shake=null;
     this.inBattle=root.classList.contains('battle-col');
@@ -963,25 +848,37 @@ body.in-battle .full-bg{display:block; position:fixed; inset:0; z-index:-3; back
   DiffGame.prototype.reset=function(li){
     this.stopTimer(); this.clearShake(); this._accum=0; this._startAt=0;
     var lv=DIFF_LEVELS[li==null?0:li]; this.levelIndex=li==null?0:li; this.level=lv;
-    this.diffCount=lv.diff;
+    this.size=lv.size; this.diffCount=lv.diff;
     this.found=0; this.playing=false; this.finished=false; this.wrongCount=0;
-    this.generate(); this.render(); this.renderTimer('00:00');
+    this.generate(); this.renderGrid(); this.renderTimer('00:00');
     var rs=this.q('.result'); if(rs) rs.classList.remove('show');
     if(this.cfg.onProgress) this.cfg.onProgress(0);
   };
   DiffGame.prototype.generate=function(){
-    this.scene=DIFF_SCENES[Math.floor(Math.random()*DIFF_SCENES.length)];
-    var n=this.scene.objects.length;
-    var idxs=shuffle(rangeArr(n)).slice(0,this.diffCount);
-    this.diffSet={}; var self=this;
-    idxs.forEach(function(i){ self.diffSet[i]=true; });
-    this.cells=this.scene.objects.map(function(o,i){ return {isDiff:!!self.diffSet[i], found:false, x:o.x, y:o.y, w:o.w, h:o.h}; });
-    this.found=0; this.totalDiff=this.diffCount;
+    var total=this.size*this.size;
+    var pool=shuffle(SCENE_POOL);
+    var base=pool.slice(0,total);
+    var extra=pool.slice(total);   // 与底图不同的 emoji，保证替换后确实“不同”
+    var cells=[];
+    for(var i=0;i<total;i++) cells.push({a:base[i], b:base[i], isDiff:false, found:false});
+    var idxs=shuffle(rangeArr(total)).slice(0,this.diffCount);
+    var self=this;
+    idxs.forEach(function(i){
+      cells[i].isDiff=true;
+      var cand = extra.length ? extra[Math.floor(Math.random()*extra.length)] : SCENE_POOL[Math.floor(Math.random()*SCENE_POOL.length)];
+      var g=0; while(cand===cells[i].a && g<25){ cand = extra.length ? extra[Math.floor(Math.random()*extra.length)] : SCENE_POOL[Math.floor(Math.random()*SCENE_POOL.length)]; g++; }
+      cells[i].b=cand;
+    });
+    this.cells=cells; this.found=0; this.totalDiff=this.diffCount;
   };
-  DiffGame.prototype.render=function(){
+  DiffGame.prototype.renderGrid=function(){
     var ga=this.q('.diff-a'), gb=this.q('.diff-b'); if(!ga||!gb) return;
-    ga.innerHTML=buildDiffSVG(this.scene,this.diffSet,'a');
-    gb.innerHTML=buildDiffSVG(this.scene,this.diffSet,'b');
+    ga.innerHTML=''; gb.innerHTML=''; ga.style.setProperty('--n',this.size); gb.style.setProperty('--n',this.size);
+    var self=this;
+    this.cells.forEach(function(c,i){
+      var da=document.createElement('div'); da.className='cell'+(c.found?' found':''); da.textContent=c.a; da.dataset.action='cell'; da.dataset.index=i; ga.appendChild(da);
+      var db=document.createElement('div'); db.className='cell'+(c.found?' found':''); db.textContent=c.b; db.dataset.action='cell'; db.dataset.index=i; gb.appendChild(db);
+    });
     var tip=this.q('.diff-tip'); if(tip) tip.textContent='已找到 '+this.found+' / '+this.totalDiff+' 处';
   };
   DiffGame.prototype.renderTimer=function(t){ var el=this.q('.timer'); if(el) el.textContent=t; };
@@ -991,20 +888,16 @@ body.in-battle .full-bg{display:block; position:fixed; inset:0; z-index:-3; back
   };
   DiffGame.prototype.pauseTimer=function(){ if(this._timer){ this._accum+=Date.now()-this._startAt; this.stopTimer(); } };
   DiffGame.prototype.stopTimer=function(){ if(this._timer){ clearInterval(this._timer); this._timer=null; } };
-  DiffGame.prototype.clearShake=function(){ if(this._shake){ clearTimeout(this._shake); this._shake=null; } var w=this.q('.diff-wrap'); if(w) w.classList.remove('shake'); };
+  DiffGame.prototype.clearShake=function(){ if(this._shake){ clearTimeout(this._shake); this._shake=null; } var ga=this.q('.diff-a'),gb=this.q('.diff-b'); if(ga) ga.classList.remove('shake'); if(gb) gb.classList.remove('shake'); };
   DiffGame.prototype.onTapCell=function(i){
     if(this.finished) return;
     var c=this.cells[i]; if(!c) return;
     if(!this.playing){ this.playing=true; this.startTimer(); }
-    if(c.isDiff){
-      if(c.found) return;
+    if(c.isDiff && !c.found){
       c.found=true; this.found++;
-      var self=this;
-      ['.diff-a','.diff-b'].forEach(function(sel){
-        var svg=self.q(sel); if(!svg) return;
-        var hot=svg.querySelector('.hot[data-index="'+i+'"]'); if(hot) hot.classList.add('found');
-        var mk=svg.querySelector('.mark[data-mi="'+i+'"]'); if(mk) mk.style.display='';
-      });
+      var ga=this.q('.diff-a'), gb=this.q('.diff-b');
+      if(ga&&ga.children[i]){ ga.children[i].classList.add('found'); ga.children[i].textContent='✅'; }
+      if(gb&&gb.children[i]){ gb.children[i].classList.add('found'); gb.children[i].textContent='✅'; }
       var tip=this.q('.diff-tip'); if(tip) tip.textContent='已找到 '+this.found+' / '+this.totalDiff+' 处';
       if(this.cfg.onProgress) this.cfg.onProgress(this.found/this.totalDiff);
       if(this.found>=this.totalDiff){ this.finish(); }
@@ -1012,8 +905,9 @@ body.in-battle .full-bg{display:block; position:fixed; inset:0; z-index:-3; back
   };
   DiffGame.prototype.onWrong=function(){
     this.wrongCount++; vibrate();
-    var w=this.q('.diff-wrap'); if(w) w.classList.add('shake');
-    var self=this; this.clearShake(); this._shake=setTimeout(function(){ if(w) w.classList.remove('shake'); },340);
+    var ga=this.q('.diff-a'), gb=this.q('.diff-b');
+    if(ga) ga.classList.add('shake'); if(gb) gb.classList.add('shake');
+    var self=this; this.clearShake(); this._shake=setTimeout(function(){ if(ga) ga.classList.remove('shake'); if(gb) gb.classList.remove('shake'); },340);
   };
   DiffGame.prototype.finish=function(){
     this.pauseTimer();
@@ -1022,9 +916,6 @@ body.in-battle .full-bg{display:block; position:fixed; inset:0; z-index:-3; back
     if(this.cfg.onFinish) this.cfg.onFinish({type:'diff',used:used,wrong:this.wrongCount}, this);
   };
   DiffGame.prototype.leave=function(){ this.pauseTimer(); this.clearShake(); };
-  /* 防御：舒尔特/找一找没有独立的 render()，统一用 renderGrid 渲染，避免被当作对战 p2 调用时抛错导致右侧空白 */
-  SchulteGame.prototype.render=function(){ this.renderGrid(); };
-  FindGame.prototype.render=function(){ this.renderGrid(); };
 
   /* ===================== 单人模式实例 ===================== */
   var spSchulteFinish=function(res){
@@ -1079,7 +970,7 @@ body.in-battle .full-bg{display:block; position:fixed; inset:0; z-index:-3; back
     if(type==='schulte') body='<div class="timer">00:00</div><div class="grid"></div>';
     else if(type==='stroop') body='<div class="stroop-progress"><i></i></div><div class="stroop-meta"><span class="meta-cur">1 / 10</span><span class="meta-best">最高 0 题</span></div><div class="stroop-instr">请点出【字】的颜色</div><div class="stroop-word">红</div><div class="stroop-feedback"></div><div class="stroop-options"></div>';
     else if(type==='find') body='<div class="find-tip">找出所有的 🌟</div><div class="timer">00:00</div><div class="grid"></div>';
-    else body='<div class="diff-tip">已找到 0 / 3 处</div><div class="timer">00:00</div><div class="diff-wrap"><div class="diff-side"><div class="diff-cap">图A</div><div class="diff-a"></div></div><div class="diff-side"><div class="diff-cap">图B</div><div class="diff-b"></div></div></div>';
+    else body='<div class="diff-tip">已找到 0 / 3 处</div><div class="timer">00:00</div><div class="diff-wrap"><div class="diff-side"><div class="diff-cap">图A</div><div class="diff-a grid"></div></div><div class="diff-side"><div class="diff-cap">图B</div><div class="diff-b grid"></div></div></div>';
     return '<div class="battle-col" data-player="'+player+'">'+head+body+'<div class="result"></div></div>';
   }
   function Battle(type, arenaId, levelRowId){
@@ -1112,17 +1003,7 @@ body.in-battle .full-bg{display:block; position:fixed; inset:0; z-index:-3; back
     this.banner.textContent=''; this.banner.className='battle-banner';
     this.arena.querySelectorAll('.battle-col').forEach(function(c){ c.classList.remove('win','lose'); });
     this.renderLevels();
-    this.p1.reset(this.levelIndex);
-    if(this.type==='diff'){
-      // 双人对战：两名玩家必须用同一张图、同一处差异，才公平可比
-      this.p2.scene=this.p1.scene; this.p2.diffSet=this.p1.diffSet; this.p2.diffCount=this.p1.diffCount;
-      this.p2.found=0; this.p2.totalDiff=this.p1.totalDiff; this.p2.playing=false; this.p2.finished=false; this.p2.wrongCount=0;
-      this.p2.cells=this.p1.cells.map(function(c){ return {isDiff:c.isDiff, found:false, x:c.x, y:c.y, w:c.w, h:c.h}; });
-      this.p2.render();
-    } else {
-      // 舒尔特/颜色/找一找：各自独立生成棋盘（reset 内部已渲染），避免误用 diff 的 p2.render 导致右侧空白
-      this.p2.reset(this.levelIndex);
-    }
+    this.p1.reset(this.levelIndex); this.p2.reset(this.levelIndex);
     Music.setProgress(0.3);
   };
   Battle.prototype.enter=function(){ this.reset(0); };
@@ -1379,15 +1260,6 @@ body.in-battle .full-bg{display:block; position:fixed; inset:0; z-index:-3; back
   // 音量
   var volEl=$('music-vol');
   if(volEl){ Music.setVolume(Number(volEl.value)/100); volEl.addEventListener('input', function(){ Music.setVolume(Number(volEl.value)/100); }); }
-
-  // 动态视口高度：解决华为等机型 100vh 包含底部手势栏导致底部按钮被遮挡/不可达
-  function setVH(){
-    document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
-  }
-  setVH();
-  window.addEventListener('resize', setVH);
-  window.addEventListener('orientationchange', function(){ setTimeout(setVH, 200); });
-  if (window.visualViewport) window.visualViewport.addEventListener('resize', setVH);
 
   // 进入首页
   renderIndex();
