@@ -1,5 +1,5 @@
 // Bella小朋友专属注意力训练APP · Service Worker
-const CACHE = 'focus-trainer-bella-v8';
+const CACHE = 'focus-trainer-bella-v9';
 const ASSETS = [
   './',
   'index.html',

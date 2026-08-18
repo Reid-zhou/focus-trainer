@@ -266,6 +266,9 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 @media (min-width:900px){
   .battle-arena{max-width:960px; margin:8px auto 0;}
 }
+/* 对战页全屏背景图：横屏/宽屏铺满整个屏幕，消除两侧白边不留白（复用首页插画，可按需替换） */
+.full-bg{display:none;}
+body.in-battle .full-bg{display:block; position:fixed; inset:0; z-index:-3; background:url('assets/images/home-bg.jpg') center center/cover no-repeat;}
 
 /* Toast */
 .toast{position:fixed; left:50%; bottom:80px; transform:translateX(-50%) translateY(20px); background:rgba(46,64,87,.92); color:#fff; padding:11px 20px; border-radius:20px; font-size:14px; opacity:0; pointer-events:none; transition:.25s; z-index:99; white-space:nowrap;}
@@ -275,6 +278,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 <body>
 <div class="home-bg"></div>
 <div class="home-mask"></div>
+<div class="full-bg"></div>
 <div class="app">
 <div class="music-ctrl">
   <button class="music-btn" id="music-btn" data-action="music-toggle" title="背景音乐">🔇</button>
@@ -1013,6 +1017,9 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     if(this.cfg.onFinish) this.cfg.onFinish({type:'diff',used:used,wrong:this.wrongCount}, this);
   };
   DiffGame.prototype.leave=function(){ this.pauseTimer(); this.clearShake(); };
+  /* 防御：舒尔特/找一找没有独立的 render()，统一用 renderGrid 渲染，避免被当作对战 p2 调用时抛错导致右侧空白 */
+  SchulteGame.prototype.render=function(){ this.renderGrid(); };
+  FindGame.prototype.render=function(){ this.renderGrid(); };
 
   /* ===================== 单人模式实例 ===================== */
   var spSchulteFinish=function(res){
@@ -1101,13 +1108,16 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     this.arena.querySelectorAll('.battle-col').forEach(function(c){ c.classList.remove('win','lose'); });
     this.renderLevels();
     this.p1.reset(this.levelIndex);
-    // 双人对战：两名玩家必须用同一张图、同一处差异，才公平可比
-    this.p2.scene=this.p1.scene;
-    this.p2.diffSet=this.p1.diffSet;
-    this.p2.diffCount=this.p1.diffCount;
-    this.p2.found=0; this.p2.totalDiff=this.p1.totalDiff; this.p2.playing=false; this.p2.finished=false; this.p2.wrongCount=0;
-    this.p2.cells=this.p1.cells.map(function(c){ return {isDiff:c.isDiff, found:false, x:c.x, y:c.y, w:c.w, h:c.h}; });
-    this.p2.render();
+    if(this.type==='diff'){
+      // 双人对战：两名玩家必须用同一张图、同一处差异，才公平可比
+      this.p2.scene=this.p1.scene; this.p2.diffSet=this.p1.diffSet; this.p2.diffCount=this.p1.diffCount;
+      this.p2.found=0; this.p2.totalDiff=this.p1.totalDiff; this.p2.playing=false; this.p2.finished=false; this.p2.wrongCount=0;
+      this.p2.cells=this.p1.cells.map(function(c){ return {isDiff:c.isDiff, found:false, x:c.x, y:c.y, w:c.w, h:c.h}; });
+      this.p2.render();
+    } else {
+      // 舒尔特/颜色/找一找：各自独立生成棋盘（reset 内部已渲染），避免误用 diff 的 p2.render 导致右侧空白
+      this.p2.reset(this.levelIndex);
+    }
     Music.setProgress(0.3);
   };
   Battle.prototype.enter=function(){ this.reset(0); };
