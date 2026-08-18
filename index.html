@@ -237,14 +237,20 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   .battle-col .opt-btn{font-size:clamp(13px,5cqw,17px); padding:12px 0;}
   .battle-col .timer{font-size:18px;}
 }
-/* 双人对战：手机竖屏提示横屏（不透明全屏覆盖，避免空白页失效） */
-.rotate-tip{display:none;}
-@media (orientation:portrait) and (max-width:900px){
-  body.in-battle .rotate-tip{display:flex; flex-direction:column; align-items:center; justify-content:center; position:fixed; inset:0; z-index:300; background:linear-gradient(160deg,#4a90e2,#7e5bef); color:#fff; text-align:center; padding:24px calc(env(safe-area-inset-right,0px) + 24px) calc(env(safe-area-inset-bottom,0px) + 24px) calc(env(safe-area-inset-left,0px) + 24px);}
-  body.in-battle .rotate-tip .rotate-ico{font-size:64px; animation:rotHint 1.6s ease-in-out infinite;}
-  body.in-battle .rotate-tip .rotate-txt{font-size:20px; font-weight:800; margin-top:14px; line-height:1.5;}
-  body.in-battle .rotate-tip .rotate-txt span{font-size:14px; font-weight:600; opacity:.85;}
-  @keyframes rotHint{0%,100%{transform:rotate(0)}50%{transform:rotate(-90deg)}}
+/* 双人对战：竖屏直接显示，不再强制横屏（横屏媒体查询仅做紧凑适配） */
+/* 竖屏对战：紧凑布局，顶部栏/关卡/横幅压缩，两列并排同屏可见 */
+@media (orientation:portrait){
+  .battle-page .topbar{margin-bottom:8px; padding:6px 10px;}
+  .battle-page .level-row{gap:5px;}
+  .battle-page .level-btn{padding:5px 4px; font-size:12px;}
+  .battle-page .level-btn small{font-size:8px; margin-top:0;}
+  .battle-banner{margin:6px 0 2px; font-size:17px; min-height:22px;}
+  .battle-arena{gap:6px; margin-top:4px;}
+  .battle-vs{width:22px; font-size:16px;}
+  .battle-col{padding:6px 4px 8px; border-radius:14px;}
+  .battle-col .timer{font-size:17px; margin:2px 0;}
+  .battle-col .cell{border-radius:10px;}
+  .battle-col .find-tip,.battle-col .diff-tip{font-size:12px; padding:5px 6px;}
 }
 /* 横屏小高度：紧凑放大，确保整页在 Mate70 等机型全屏可见 */
 @media (orientation:landscape) and (max-height:560px){
@@ -429,7 +435,6 @@ body.in-battle .full-bg{display:block; position:fixed; inset:0; z-index:-3; back
   </section>
 
 </div>
-<div id="rotate-tip" class="rotate-tip"><div class="rotate-ico">📱↻</div><div class="rotate-txt">请把手机横过来<br><span>双人同屏对战更畅快</span></div></div>
 <div id="toast" class="toast"></div>
 
 <script>
