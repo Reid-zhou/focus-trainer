@@ -898,9 +898,18 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     var lv=DIFF_LEVELS[li==null?0:li]; this.levelIndex=li==null?0:li; this.level=lv;
     this.diffCount=lv.diff;
     this.found=0; this.playing=false; this.finished=false; this.wrongCount=0;
-    this.generate(); this.render(); this.renderTimer('00:00');
+    this.renderLevels(); this.generate(); this.render(); this.renderTimer('00:00');
     var rs=this.q('.result'); if(rs) rs.classList.remove('show');
     if(this.cfg.onProgress) this.cfg.onProgress(0);
+  };
+  DiffGame.prototype.renderLevels=function(){
+    var sr=this.q('.level-row'); if(!sr) return;
+    var self=this; sr.innerHTML='';
+    DIFF_LEVELS.forEach(function(lv,idx){
+      var b=document.createElement('button'); b.className='level-btn'+(idx===self.levelIndex?' active':'');
+      b.innerHTML=lv.name+'<small>'+lv.desc+'</small>';
+      b.dataset.action='level'; b.dataset.index=idx; sr.appendChild(b);
+    });
   };
   DiffGame.prototype.generate=function(){
     this.scene=DIFF_SCENES[Math.floor(Math.random()*DIFF_SCENES.length)];
@@ -1232,6 +1241,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
         else if(current==='find-battle') battleFind.reset(li);
         else if(current==='schulte') schulteSP.reset(li);
         else if(current==='stroop') stroopSP.reset(li);
+        else if(current==='diff') diffSP.reset(li);
         break;
       }
       case 'cell': {
