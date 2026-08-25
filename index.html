@@ -180,6 +180,8 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 .item-name{font-size:15px; font-weight:600; color:var(--ink);}
 .item-unit{font-size:12px; color:var(--ink2);}
 .item-value{font-size:16px; font-weight:800; color:var(--main-d);}
+.item-time{font-size:11px; color:var(--ink2); margin-top:2px;}
+.item-empty{font-size:13px; color:var(--ink2); padding:10px 0; text-align:center;}
 
 /* ===================== 双人同屏对战（横排自适应） ===================== */
 .page.battle-page{ width:100vw; max-width:100vw; position:relative; left:50%; margin-left:-50vw; padding:18px 14px 0; }
@@ -366,6 +368,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     <div class="subtitle" id="stats-praise" style="text-align:center;">开始你的第一局吧！</div>
     <div class="total-card"><div class="total-label">总游戏次数</div><div class="total-value" id="stats-playcount">0</div><div class="total-unit">次</div></div>
     <div class="card"><div class="list-title">最佳成绩</div><div id="stats-items"></div></div>
+    <div class="card"><div class="list-title">最近战绩</div><div id="stats-history"></div></div>
     <button class="btn btn-danger" data-action="stats-clear">清除记录</button>
   </section>
 
@@ -384,7 +387,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     var best={}, score={};
     BEST_KEYS.forEach(function(k){ best[k]=0; });
     SCORE_KEYS.forEach(function(k){ score[k]=0; });
-    return { playCount:0, best:best, score:score, restCount:0 };
+    return { playCount:0, best:best, score:score, restCount:0, history:[] };
   }
   function readAll(){
     var raw=null;
@@ -395,7 +398,8 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
       playCount: typeof raw.playCount==='number'?raw.playCount:base.playCount,
       best: Object.assign({}, base.best, raw.best&&typeof raw.best==='object'?raw.best:{}),
       score: Object.assign({}, base.score, raw.score&&typeof raw.score==='object'?raw.score:{}),
-      restCount: typeof raw.restCount==='number'?raw.restCount:base.restCount
+      restCount: typeof raw.restCount==='number'?raw.restCount:base.restCount,
+      history: raw.history&&Array.isArray(raw.history)?raw.history:[]
     };
   }
   function writeAll(d){ try{ localStorage.setItem(ROOT_KEY, JSON.stringify(d)); return true; }catch(e){ return false; } }
@@ -434,7 +438,22 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     if(typeof ms!=='number'||ms<=0) return '暂无';
     return (ms/1000).toFixed(1)+' 秒';
   }
-  var store={ getBest:getBest,setBest:setBest,getScore:getScore,setScore:setScore,incrPlayCount:incrPlayCount,getRestCount:getRestCount,incrRestCount:incrRestCount,getStats:getStats,clearAll:clearAll,formatTime:formatTime,formatSeconds:formatSeconds };
+  function formatDateTime(ts){
+    if(typeof ts!=='number'||!isFinite(ts)||ts<=0) return '';
+    var d=new Date(ts);
+    function p(n){ return (n<10?'0':'')+n; }
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());
+  }
+  function pushHistory(rec){
+    if(!rec||typeof rec!=='object') return false;
+    var d=readAll();
+    if(!Array.isArray(d.history)) d.history=[];
+    d.history.push(rec);
+    if(d.history.length>30) d.history=d.history.slice(d.history.length-30);
+    writeAll(d); return true;
+  }
+  function getHistory(){ var d=readAll(); return Array.isArray(d.history)?d.history:[]; }
+  var store={ getBest:getBest,setBest:setBest,getScore:getScore,setScore:setScore,incrPlayCount:incrPlayCount,getRestCount:getRestCount,incrRestCount:incrRestCount,getStats:getStats,clearAll:clearAll,formatTime:formatTime,formatSeconds:formatSeconds,formatDateTime:formatDateTime,pushHistory:pushHistory,getHistory:getHistory };
 
   /* ===================== 工具 ===================== */
   function $(id){ return document.getElementById(id); }
@@ -968,7 +987,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
 
   /* ===================== 单人模式实例 ===================== */
   var spSchulteFinish=function(res){
-    var isNew=store.setBest(res.bestKey,res.used); store.incrPlayCount();
+    var isNew=store.setBest(res.bestKey,res.used); store.incrPlayCount(); store.pushHistory({type:'schulte', name:'舒尔特·'+res.level.name, value:store.formatSeconds(res.used), time:Date.now()});
     var r=schulteSP.q('.result');
     r.innerHTML='<div class="big">'+store.formatSeconds(res.used)+'</div>'+
       '<div class="sub">点错 '+res.wrong+' 次 · 历史最佳 '+store.formatSeconds(store.getBest(res.bestKey))+'</div>'+
@@ -976,7 +995,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     r.classList.add('show'); toast(isNew?'新纪录！⭐':'太棒了！⭐');
   };
   var spStroopFinish=function(res){
-    var isNew=store.setScore('stroop',res.score); store.incrPlayCount();
+    var isNew=store.setScore('stroop',res.score); store.incrPlayCount(); store.pushHistory({type:'stroop', name:'颜色挑战', value:res.score+' 题', time:Date.now()});
     var r=stroopSP.q('.result');
     var acc=Math.round(res.score/res.total*100);
     var praise = acc>=90?'专注力超强，火眼金睛！🔥' : acc>=70?'不错哦，再练更厉害！💪' : '别灰心，多玩几次就熟啦～🌟';
@@ -988,7 +1007,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
     toast(isNew?'新纪录！⭐':'完成啦！⭐');
   };
   var spFindFinish=function(res){
-    var isNew=store.setBest('find',res.used); store.incrPlayCount();
+    var isNew=store.setBest('find',res.used); store.incrPlayCount(); store.pushHistory({type:'find', name:'找一找', value:store.formatSeconds(res.used), time:Date.now()});
     var r=findSP.q('.result');
     var star=1; if(res.used<=12000 && res.wrong<=1) star=3; else if(res.used<=20000 && res.wrong<=3) star=2;
     var stars=''; for(var k=0;k<star;k++) stars+='⭐';
@@ -1001,7 +1020,7 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
   var stroopSP=new StroopGame($('page-stroop'), { onProgress:function(p){ Music.setProgress(0.3+p*0.5); }, onFinish:spStroopFinish });
   var findSP=new FindGame($('page-find'), { onProgress:function(p){ Music.setProgress(0.3+p*0.5); }, onFinish:spFindFinish });
   var spDiffFinish=function(res){
-    var isNew=store.setBest('diff',res.used); store.incrPlayCount();
+    var isNew=store.setBest('diff',res.used); store.incrPlayCount(); store.pushHistory({type:'diff', name:'找不同', value:store.formatSeconds(res.used), time:Date.now()});
     var r=diffSP.q('.result');
     var star=1; if(res.used<=20000 && res.wrong<=2) star=3; else if(res.used<=35000 && res.wrong<=4) star=2;
     var stars=''; for(var k=0;k<star;k++) stars+='⭐';
@@ -1189,6 +1208,17 @@ body{background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;
         row.innerHTML='<div class="item-emoji">'+it.emoji+'</div><div class="item-main"><div class="item-name">'+it.name+'</div><div class="item-unit">'+it.unit+'</div></div><div class="item-value">'+it.value+'</div>';
         box.appendChild(row);
       });
+      var HIST_EMOJI={schulte:'🔢',stroop:'🎨',find:'🔍',diff:'🖼️'};
+      var hbox=$('stats-history'); hbox.innerHTML='';
+      var hist=store.getHistory();
+      if(!hist || hist.length===0){ hbox.innerHTML='<div class="item-empty">还没有战绩，快去玩一局吧！</div>'; }
+      else {
+        hist.slice(-15).reverse().forEach(function(h){
+          var row=document.createElement('div'); row.className='item';
+          row.innerHTML='<div class="item-emoji">'+(HIST_EMOJI[h.type]||'🎮')+'</div><div class="item-main"><div class="item-name">'+h.name+'</div><div class="item-time">'+store.formatDateTime(h.time)+'</div></div><div class="item-value">'+h.value+'</div>';
+          hbox.appendChild(row);
+        });
+      }
     }
   };
 
